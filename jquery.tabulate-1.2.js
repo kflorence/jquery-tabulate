@@ -1283,6 +1283,8 @@
              * @event
              * @see The jQuery <a href="http://api.jquery.com/category/events/event-object/">Event</a> Object
              * @param {object} event The jQuery Event Object
+             * @param {object} data The data source to use ({@link $.tabulate.data} by default).
+             * @param {object} filters Filters to apply to this load request only.
              */
             refresh: function(event, data, filters) {
                 this.load(data || this.data, filters || {});
