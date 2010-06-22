@@ -2,9 +2,27 @@ jQuery.tabulate Plugin
 --------------------------------------------------------------------------------
 
   Author: Kyle Florence <kyle.florence@gmail.com>
-  Version: 1.0.20100611
+  Version: 1.2.20100622
 
   CHANGELOG:
+  
+  - 06/22/2010 - Version 1.2
+      - BUG FIXES
+          - fixed passing in rows and columns as objects (previously resulted in
+            an empty dataset as the object would be pushed to an array).
+          - fixed rows and columns event handlers not being called because of
+            namespacing (namespacing of event handlers is now user controlled).
+          - fixed column names if columns is passed as an object, fixed column
+            name if array is passed (now uses a "one" based index instead of
+            "zero").
+            
+      - FEATURES
+          - Added convenience methods for triggering event handlers and error
+            handlers ("trigger" and "error", respectfully), useful especially
+            when called from outside the class.
+          - Added a "filters" parameter to the load function which allows you
+            to apply filters to a single request only (does not store these
+            filters in class).
   
   - 06/11/2010 - Version 1.0
       - Initial release
