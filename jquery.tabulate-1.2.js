@@ -19,7 +19,7 @@
 /**
  * @fileOverview The jQuery.tabulate plugin.
  * @author <a href="mailto:kyle.florence@gmail.com">Kyle Florence</a>
- * @version 1.0.20100610
+ * @version 1.2.20100622
  */
 
 /**
