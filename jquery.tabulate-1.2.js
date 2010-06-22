@@ -63,7 +63,7 @@
      * </p>
      * 
      * @example $('#element').tabulate({...});
-     * @param options An object containing default option overrides.
+     * @param {object} options An object containing default option overrides.
      * @return {jQuery} The jQuery object that was passed to this function.
      */
     $.fn.tabulate = function(options) {
@@ -80,7 +80,7 @@
                  * @type Object
                  * @class
                  */
-            	var tabulate = $.extend(true, {}, $.tabulate);
+                var tabulate = $.extend(true, {}, $.tabulate);
 
                 // store class instance in $this
                 $this.data("tabulate", tabulate);
@@ -94,7 +94,7 @@
                  * @return {String} "[object instance.name]"
                  */
                 tabulate.toString = function() {
-                	return "[object " + this.name + "]";
+                    return "[object " + this.name + "]";
                 };
             }
         });
@@ -353,7 +353,7 @@
              * @default []
              * @type Array or Object
              */
-            rows: [],
+            rows: {},
             
             /**
              * An Array or Object containing columns and their properties.
@@ -382,7 +382,7 @@
              * @default []
              * @type Array or Object
              */
-            columns: [],
+            columns: {},
             
             /**
              * Filters to apply to the dataset.
@@ -526,19 +526,19 @@
              * @namespace Holds the default paths for {@link jQuery.tabulate}
              */
             paths: {
-        		/**
-        		 * The default path to this file.
-        		 * 
-        		 * <p>
-        		 *   By default, it is set to the path of the page being viewed.
-        		 *   This is probably not desired and should be overwritten.
-        		 * </p>
-        		 * 
-        		 * @default window.location.pathname
-        		 * @type String
-        		 */
-        		tabulate: window.location.pathname,
-        		
+                /**
+                 * The default path to this file.
+                 * 
+                 * <p>
+                 *   By default, it is set to the path of the page being viewed.
+                 *   This is probably not desired and should be overwritten.
+                 * </p>
+                 * 
+                 * @default window.location.pathname
+                 * @type String
+                 */
+                tabulate: window.location.pathname,
+                
                 /**
                  * The default path to the theme.
                  * 
@@ -551,7 +551,7 @@
                  * @type String
                  */
                 theme: "themes/default"
-        	}
+            }
         },
         
         /**
@@ -571,8 +571,8 @@
              * 
              * @type jQuery
              */
-        	$link: $('<a />'),
-        	
+            $link: $('<a />'),
+            
             /**
              * Default image element.
              * 
@@ -678,15 +678,15 @@
          */
         init: function($wrapper, options) {            
             var self = this;
-
+            
             $.extend(true, this.options, options || {});
             $.extend(true, this, this.options);
             
             this.$wrapper = $wrapper;
             this.paths.theme = [this.paths.tabulate, this.paths.theme].join("/");
-            
-            // TODO filters should be stored in a cookie and set here
-            this.filters.limit = this.results_per_page[0];
+
+            // set limit to first item in results per page array, if not set
+            this.filters.limit = this.filters.limit || this.results_per_page[0];
 
             // build our table
             this.$table = this.fragments.$table
@@ -746,7 +746,7 @@
             });
 
             // fire init handler
-            this.$wrapper.triggerHandler(["post_init", this.name].join("."));
+            this.trigger("post_init");
         },
         
         /**
@@ -764,7 +764,10 @@
         previous: function(element) {
             if (this.current_page > 1) {
                 this.current_page--;
-                this.$wrapper.triggerHandler(["refresh", this.name].join("."));
+                
+                this.update_filters({
+                    offset: ((this.current_page - 1) * this.filters.limit)
+                });
             }
         },
         
@@ -782,7 +785,10 @@
         next: function(element) {
             if (this.current_page < this.total_pages) {
                 this.current_page++;
-                this.$wrapper.triggerHandler(["refresh", this.name].join("."));
+                
+                this.update_filters({
+                    offset: ((this.current_page - 1) * this.filters.limit)
+                });
             }
         },
         
@@ -802,7 +808,10 @@
         go_to: function(element, page) {
             if (page >= 1 && page <= this.total_pages) {                
                 this.current_page = page;
-                this.$wrapper.triggerHandler(["refresh", this.name].join("."));
+                
+                this.update_filters({
+                    offset: ((this.current_page - 1) * this.filters.limit)
+                });
             }
         },
         
@@ -823,12 +832,41 @@
          * </p>
          * 
          * @param {object} filters The filters to apply to the dataset.
+         * @param {object} refresh Whether or not to call the refresh handler. Defaults to true.
          */
-        update_filters: function(filters) {
+        update_filters: function(filters, refresh) {
             $.extend(true, this.filters, filters || {});
 
-            this.current_page = 1; // back to page 1
-            this.$wrapper.triggerHandler(["refresh", this.name].join("."));
+            if (refresh !== false) {
+                this.trigger("refresh");
+            }
+        },
+        
+        /**
+         * Convenience function for handling errors.
+         * 
+         * @param {String} name The name of the error handler.
+         * @param {Array} args The Array of arguments to pass to the handler function.
+         */
+        error: function(name, args) {
+            if (this.error_handlers[name] != "undefined") {
+                this.error_handlers[name].apply(this, args || []);
+            }
+        },
+        
+        /**
+         * Convenience function for triggering events.
+         * 
+         * <p>
+         *   Note that this function automatically wraps handlers in the
+         *   namespace of the current instance.
+         * </p>
+         * 
+         * @param {String} name The name of the event handler.
+         * @param {Array} args The Array of arguments to pass to the handler function.
+         */
+        trigger: function(name, args) {
+            this.$wrapper.triggerHandler([name, this.name].join("."), args || []);
         },
         
         /**
@@ -948,11 +986,12 @@
          */
         set_properties: function($element, properties) {
             if ($element && typeof properties == "object") {
-                var tag = $element.attr("tagName").toLowerCase();
+                var self = this,
+                    tag = $element.attr("tagName").toLowerCase();
                 
                 // These properties apply to cells only
                 if (tag == "td") {
-                    var    data = properties.data || {},
+                    var data = properties.data || {},
                         $content = properties.$content || $element;
 
                     if (properties.content && properties.content.length) {
@@ -978,8 +1017,8 @@
                 
                 if (typeof properties.event_handlers == "object") {
                     $.each(properties.event_handlers, function(name, handler) {
-                        $element.bind([self.name, properties.name, name].join("."), function() {
-                            handler.apply(self, arguments);
+                        $element.bind(name, function(event) {
+                            handler.apply(self, [event, $element, data || {}]);
                         });
                     });
                 }
@@ -1014,35 +1053,34 @@
          * @see jQuery.tabulate.event_handlers
          * 
          * @param {object} request The request object.
+         * @param {object} filters Filters that will apply to this request only.
          */
-        load: function(request) {
+        load: function(request, filters) {
             request = request || this.data;
             
             if (request) {
-                this.$wrapper.triggerHandler(["loading", this.name].join("."), [true]);
+                this.trigger("loading", [true]);
 
                 // use AJAX load to get our data
                 if (typeof request.ajax == "object" && !$.isEmpty(request.ajax)) {
-                    var    self = this;
+                    var self = this;
 
                     // update filters
-                    $.extend(true, this.filters, {
-                        offset: ((this.current_page - 1) * this.filters.limit)
-                    });
+                    filters = $.extend(true, {}, this.filters, filters);
                     
                     // merge request with additional internal arguments
                     var request = $.extend(true, {}, request.ajax, {
-                        data: this.filters,
+                        data: filters,
                         cache: this.cache_requests,
                         success: function(data) {
                             // merge in static JSON content, if any
                             $.extend(true, data, request.json || {});
                             
                             // fire post load handler
-                            self.$wrapper.triggerHandler(["post_load", self.name].join("."), [data]);
+                            self.trigger("post_load", [data]);
                         },
                         error: function() {
-                        	self.error_handlers.ajax.apply(self, arguments);
+                            self.error("ajax", arguments);
                         }
                     });
                     
@@ -1052,7 +1090,7 @@
     
                 // use static JSON data
                 else if (typeof request.json == "object" && !$.isEmpty(request.json)) {
-                    this.$wrapper.triggerHandler(["post_load", this.name].join("."), [request.json]);
+                    this.trigger("post_load", [request.json]);
                 }
             }
         },
@@ -1097,7 +1135,7 @@
                 $row = this.fragments.$row.clone(),
                 rows = $.getNestedKey(this.keys.rows, data) || {},
                 columns = $.getNestedKey(this.keys.columns, data) || {};
-            
+
             // store data statistics
             this.count = data[this.keys.count] || $.getLength(rows);
             this.total_pages = Math.ceil(this.count / this.filters.limit) || 1;
@@ -1108,14 +1146,15 @@
             
             // rows is empty or missing
             if ($.isEmpty(rows)) {
-                this.error_handlers.tabulate.apply(this, arguments);
+                this.error("tabulate", arguments);
             }
 
             // we've got data to work with
             else {
                 // build table head
-                $.each(this.columns, function(c, column) {                    
-                    var $cell = self.fragments.$cell.clone(),
+                $.each(this.columns, function(c, column) {
+                    var c = ($.isNumber(c) ? parseInt(c) + 1 : c),
+                        $cell = self.fragments.$cell.clone(),
                         $content = self.fragments.$content.clone(),
                         properties = $.extend({}, {
                             args: [$row, $cell, $content],
@@ -1138,12 +1177,14 @@
     
                 // build table body
                 $.each(rows, function(r, row_data) {
-                    var render = false, // whether or not to append this row
+                    var r = ($.isNumber(r) ? parseInt(r) + 1 : r),
+                        render = false, // whether or not to append this row
                         $row = self.fragments.$row.clone();
                     
                     // build cells
                     $.each(self.columns, function(c, column_data) {                    
-                        var $cell = self.fragments.$cell.clone(),
+                        var c = ($.isNumber(c) ? parseInt(c) + 1 : c),
+                            $cell = self.fragments.$cell.clone(),
                             $content = self.fragments.$content.clone(),
                             properties = $.extend({}, {
                                 data: row_data,
@@ -1201,8 +1242,8 @@
             }
             
             // fire handlers
-            this.$wrapper.triggerHandler(["loading", this.name].join("."), [false]);
-            this.$wrapper.triggerHandler(["post_tabulate", this.name].join("."), [data]);
+            this.trigger("loading", [false]);
+            this.trigger("post_tabulate", [data]);
         },
         
         /**
@@ -1243,8 +1284,8 @@
              * @see The jQuery <a href="http://api.jquery.com/category/events/event-object/">Event</a> Object
              * @param {object} event The jQuery Event Object
              */
-            refresh: function(event) {
-                this.load();
+            refresh: function(event, data, filters) {
+                this.load(data || this.data, filters || {});
             },
             
             /**
@@ -1285,7 +1326,7 @@
              */
             post_init: function(event) {
                 var self = this;
-                
+
                 // add colspan to footer (note the capital S in colSpan, IE/jQuery bug!)
                 this.$foot.find(".tabulate-cell").attr("colSpan", $.getLength(this.columns));
                 
@@ -1297,7 +1338,7 @@
                 });
                 
                 // load our data
-                this.$wrapper.triggerHandler(["refresh", this.name].join("."));
+                this.trigger("refresh");
             },
             
             /**
@@ -1362,12 +1403,12 @@
              * @param {string} textStatus A String describing the type of error that occurred
              * @param {exception} errorThrown An exception object, if one occurred
              */
-        	ajax: function(XMLHttpRequest, textStatus, errorThrown) {
+            ajax: function(XMLHttpRequest, textStatus, errorThrown) {
                 // log error information to console
-            	console.log(this.toString() + " Error: " + textStatus, XMLHttpRequest, errorThrown);
+                console.log(this.toString() + " Error: " + textStatus, XMLHttpRequest, errorThrown);
 
-            	// alert the user with the status code and text.
-            	alert(XMLHttpRequest.status + ": " + (XMLHttpRequest.statusText || "Unknown error."));
+                // alert the user with the status code and text.
+                alert(XMLHttpRequest.status + ": " + (XMLHttpRequest.statusText || "Unknown error."));
             },
             
             /**
@@ -1381,7 +1422,7 @@
              * @param {object} data The data that was passed into {@link jQuery.tabulate.tabulate}.
              */
             tabulate: function(data) {
-            	console.log(this.toString() + " Warning: '" + this.keys.rows + "' is empty or missing.");
+                console.log(this.toString() + " Warning: '" + this.keys.rows + "' is empty or missing.");
             }
         }
     };
