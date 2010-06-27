@@ -6,8 +6,10 @@ jQuery.tabulate Plugin
 
   CHANGELOG:
   
-  - 06/27-2010 - Version 2.0
+  - 06/27/2010 - Version 2.0
       - FEATURES
+          - Added demo page.
+          - Added "default" theme style and images.
           - Added the ability to pass content and class names in as a function.
           - Changed the way columns are built via passing them in.  You now pass
             in row and column information into the "table" object, which is then
