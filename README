@@ -2,17 +2,32 @@ jQuery.tabulate Plugin
 --------------------------------------------------------------------------------
 
   Author: Kyle Florence <kyle.florence@gmail.com>
-  Version: 1.2.20100622
+  Version: 2.0.20100627
 
   CHANGELOG:
   
+  - 06/27-2010 - Version 2.0
+      - FEATURES
+          - Added the ability to pass content and class names in as a function.
+          - Changed the way columns are built via passing them in.  You now pass
+            in row and column information into the "table" object, which is then
+            divided into the "rows" and "columns" objects.  Each of these are
+            also broken down by section (usually "head", "body" and/or "foot").
+            This grouping seems to make more sense, logically.
+          - Changed the way tabulate initially gathers its data.  It is now
+            nested within the "data" object as "source" -- also changed the
+            "load" function to "gather_data" as it makes more sense, logically.
+
+      - MISC
+          - Semantic changes, mainly for readability and namespacing.
+  
   - 06/22/2010 - Version 1.2
       - BUG FIXES
-          - fixed passing in rows and columns as objects (previously resulted in
+          - Fixed passing in rows and columns as objects (previously resulted in
             an empty dataset as the object would be pushed to an array).
-          - fixed rows and columns event handlers not being called because of
+          - Fixed rows and columns event handlers not being called because of
             namespacing (namespacing of event handlers is now user controlled).
-          - fixed column names if columns is passed as an object, fixed column
+          - Fixed column names if columns is passed as an object, fixed column
             name if array is passed (now uses a "one" based index instead of
             "zero").
             
