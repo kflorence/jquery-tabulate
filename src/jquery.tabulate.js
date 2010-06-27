@@ -19,7 +19,7 @@
 /**
  * @fileOverview The jQuery.tabulate plugin.
  * @author <a href="mailto:kyle.florence@gmail.com">Kyle Florence</a>
- * @version 1.2.20100622
+ * @version 1.0.20100610
  */
 
 /**
@@ -87,15 +87,6 @@
                 
                 // initialize, pass in options
                 tabulate.init($this, options);
-                
-                /**
-                 * Object toString override
-                 * 
-                 * @return {String} "[object instance.name]"
-                 */
-                tabulate.toString = function() {
-                    return "[object " + this.name + "]";
-                };
             }
         });
     };
@@ -153,6 +144,14 @@
         current_page: 1,
         
         /**
+         * The number of columns in the table (at its widest point)
+         * 
+         * @default 0
+         * @type integer
+         */
+        columns: 0,
+        
+        /**
          * The settings {@link jQuery.tabulate} will use by default.
          * 
          * <p>
@@ -178,15 +177,6 @@
              * @type String
              */
             name: "tabulate",
-            
-            /**
-             * Whether or not to allow AJAX request caching in the browser.
-             * 
-             * @see <a href="http://api.jquery.com/jQuery.ajax/">jQuery.ajax</a>
-             * @default false
-             * @type boolean
-             */
-            cache_requests: false,
             
             /**
              * An Array of integer values that will be used to populate the
@@ -219,298 +209,6 @@
              */
             parse_key: function() {
                 return new RegExp(/\{([^{}]+)\}/g);
-            },
-            
-            /**
-             * A reference to the data tabulate will use to build the table.
-             * 
-             * <p>
-             *   This data may be passed in explicitly or it may be loaded on 
-             *   the fly with AJAX.  JSON is currently the only supported data
-             *   type, though other data types may be added in the future.
-             * </p>
-             * 
-             * @type Object
-             * @namespace Holds JSON data or AJAX request settings.
-             */
-            data: {
-                /**
-                 * The settings for an AJAX request.
-                 * 
-                 * <p>
-                 *   These settings that will be passed into <a href="http://api.jquery.com/jQuery.ajax/">jQuery.ajax</a>.
-                 *   Any of the options available to that function may be used
-                 *   here, with the exception of the "success" and "error"
-                 *   functions, which are overridden internally.
-                 * </p>
-                 * 
-                 * <code>
-                 * {
-                 *     ajax: {
-                 *         url: "/path/to/controller",
-                 *         data: { method: "some_method" },
-                 *         dataType: "json"
-                 *     }
-                 * }
-                 * </code>
-                 * 
-                 * @see <a href="http://api.jquery.com/jQuery.ajax/">jQuery.ajax</a>
-                 * @default {}
-                 * @type Object
-                 */
-                ajax: {},
-                
-                /**
-                 * JSON data.
-                 * 
-                 * <code>
-                 * {
-                 *     json: {
-                 *         count: 1234,
-                 *         some_other_data: "data",
-                 *         more_custom_data: "not needed by tabulate",
-                 *         rows: {
-                 *             "row1": {...},
-                 *             "row2": {...},
-                 *             ...
-                 *             "row1234": {...}
-                 *         }
-                 *     }
-                 * }
-                 * </code>
-                 * 
-                 * @see <a href="http://jsonlint.com/">JSONLint</a>
-                 * @default {}
-                 * @type Object
-                 */
-                json: {}
-            },
-            
-            /**
-             * Contains the names of keys within the dataset that gives tabulate
-             * the data it needs to build the table.
-             * 
-             * @type Object
-             * @namespace Holds the names of keys in the dataset.
-             */
-            keys: {                
-                /**
-                 * The key that will store row data.
-                 * 
-                 * <p>
-                 *   This data will be used to populate the columns within the
-                 *   body of the table.  This key is pretty much required unless
-                 *   you don't have any information to tabulate, in which case
-                 *   this plugin is rather pointless for you!
-                 * </p>
-                 * 
-                 * @default "rows"
-                 * @type String
-                 */
-                rows: "rows",
-                
-                /**
-                 * The key that will store column headers.
-                 * 
-                 * <p>
-                 *   This data will be used to populate the table content of
-                 *   the columns in the table header. This is useful if you need
-                 *   to pass dynamic data into the table header.  If you don't
-                 *   need dynamic headings, it's probably easier to set the
-                 *   table headings manually in {@link jQuery.tabulate.options.columns}.
-                 * </p>
-                 * 
-                 * @default "columns"
-                 * @type String
-                 */
-                columns: "columns",
-                
-                /**
-                 * The key that will store the total record count.
-                 * 
-                 * <p>
-                 *   If this key is omitted, the number of rows in the dataset
-                 *   will be used instead (note: this may break pagination).
-                 * </p>
-                 * 
-                 * @default "count"
-                 * @type String
-                 */
-                count: "count"
-            },
-            
-            /**
-             * An Array or Object containing rows and their properties.
-             * 
-             * <p>
-             *   Rows are broken into two sections, head and body.  The
-             *   properties inside these sections are applied to their
-             *   respective locations in the table.  See
-             *   {@link jQuery.tabulate.set_properties} for in depth documentation
-             *   on what properties can be assigned to a row.
-             * </p>
-             * 
-             * @default []
-             * @type Array or Object
-             */
-            rows: {},
-            
-            /**
-             * An Array or Object containing columns and their properties.
-             * 
-             * <p>
-             *   Columns are broken into two sections, head and body.  The
-             *   properties inside these sections are applied to their respective
-             *   locations in the table.  See {@link jQuery.tabulate.set_properties}
-             *   for in depth documentation on what properties can be assigned
-             *   to a column.
-             * </p>
-             * 
-             * <code>
-             * {
-             *     head: {
-             *         content: "Column 1"
-             *         styles: { "font-weight": "bold" }
-             *     }
-             *     body: {
-             *         content: "This is column 1"
-             *     }
-             * }
-             * </code>
-             *
-             * @see <a href="http://api.jquery.com/jQuery.css/">jQuery.css</a>
-             * @default []
-             * @type Array or Object
-             */
-            columns: {},
-            
-            /**
-             * Filters to apply to the dataset.
-             * 
-             * <p>
-             *   By default, limit and offset are the only filters.  Further
-             *   filters may be added via {@link jQuery.tabulate.update_filters}.
-             * </p>
-             * 
-             * @type Object
-             * @namespace Holds filters for the dataset.
-             */
-            filters: {
-                /**
-                 * How many items to show per page.
-                 * 
-                 * @default 0
-                 * @type integer
-                 */
-                limit: 0,
-                
-                /**
-                 * Which item to start the dataset with.
-                 * 
-                 * @default 0
-                 * @type integer
-                 */
-                offset: 0
-            },
-            
-            /**
-             * Can be used to override the default event handlers that are
-             * defined in {@link jQuery.tabulate.event_handlers}.
-             * 
-             * @see jQuery.tabulate.event_handlers
-             * @default {}
-             * @type Object
-             */
-            event_handlers: {},
-            
-            /**
-             * Can be used to override the default error handlers that are
-             * defined in {@link jQuery.tabulate.error_handlers}.
-             * 
-             * @see jQuery.tabulate.error_handlers
-             * @default {}
-             * @type Object
-             */
-            error_handlers: {},
-            
-            /**
-             * Contains the jQuery selectors for key elements.
-             * 
-             * <p>
-             *   Keep in mind that upon initialization these values will be
-             *   replaced by the jQuery object(s) they select.
-             * </p>
-             * 
-             * @see jQuery.tabulate.init
-             * @type Object
-             * @namespace Holds all of our jQuery objects
-             */
-            elements: {
-                /**
-                 * The jQuery selector for the "loading" element.  This element is
-                 * activated whenever tabulate is loading.
-                 * 
-                 * @default ".tabulate-loading"
-                 * @type String
-                 */
-                $loading: ".tabulate-loading",
-                
-                /**
-                 * The jQuery selector for the "previous" element.  This element
-                 * is bound to the {@link jQuery.tabulate.previous} function.
-                 * 
-                 * @default ".tabulate-prev"
-                 * @type String
-                 */
-                $previous: ".tabulate-prev",
-                
-                /**
-                 * The jQuery selector for the "next" element.  This element is 
-                 * bound to the {@link jQuery.tabulate.next} function.
-                 * 
-                 * @default ".tabulate-next"
-                 * @type String
-                 */
-                $next: ".tabulate-next",
-                
-                /**
-                 * The jQuery selector for the "count" element.  This element
-                 * stores the value of the {@link jQuery.tabulate.count} variable.
-                 * 
-                 * @default ".tabulate-count"
-                 * @type String
-                 */
-                $count: ".tabulate-count",
-                
-                /**
-                 * The jQuery selector for the "total pages" element.  This
-                 * element stores the value of the {@link jQuery.tabulate.total_pages}
-                 * variable.
-                 * 
-                 * @default ".tabulate-total-pages"
-                 * @type String
-                 */
-                $total_pages: ".tabulate-total-pages",
-                
-                /**
-                 * The jQuery selector for the "current page" element.  This
-                 * element stores the value of the {@link jQuery.tabulate.current_page}
-                 * variable.
-                 * 
-                 * @default ".tabulate-current-page"
-                 * @type String
-                 */
-                $current_page: ".tabulate-current-page",
-                
-                /**
-                 * The jQuery selector for the "results per page" element.  This
-                 * element is bound to the {@link jQuery.tabulate.update_filters}
-                 * function, specifically for updating the "limit" filter.
-                 * 
-                 * @default ".tabulate-results-per-page"
-                 * @type String
-                 */
-                $results_per_page: ".tabulate-results-per-page"
             },
             
             /**
@@ -551,116 +249,341 @@
                  * @type String
                  */
                 theme: "themes/default"
-            }
-        },
-        
-        /**
-         * Contains jQuery objects generated from HTML fragments.
-         * 
-         * <p>
-         *   These fragments are used to generate the table.  Feel free to edit
-         *   the fragments to suit your needs.
-         * </p>
-         * 
-         * @type Object
-         * @namespace Holds all of our jQuery object fragments
-         */
-        fragments: {
-            /**
-             * Default anchor element.
-             * 
-             * @type jQuery
-             */
-            $link: $('<a />'),
+            },
             
             /**
-             * Default image element.
-             * 
-             * @type jQuery
+             * @namespace Contains the names of keys in the data set.
              */
-            $image: $('<img />'),
+            keys: {
+                head: "head",
+                body: "body",
+                foot: "foot",
+                
+                /**
+                 * The key that will store the total record count.
+                 * 
+                 * <p>
+                 *   If this key is omitted, the number of results in the
+                 *   data set will be used instead.
+                 * </p>
+                 * 
+                 * @default string "count"
+                 */
+                count: "count"
+            },
             
             /**
-             * Default option element.
+             * A reference to the data tabulate will use to build the table.
              * 
-             * @type jQuery
+             * <p>
+             *   This data may be passed in explicitly or it may be loaded on 
+             *   the fly with AJAX.  JSON is currently the only supported data
+             *   type, though other data types may be added in the future.
+             * </p>
+             * 
+             * @type Object
+             * @namespace Holds JSON data or AJAX request settings.
              */
-            $option: $('<option />'),
+            data: {
+                source: {
+                    /**
+                     * The settings for an AJAX request.
+                     * 
+                     * <p>
+                     *   These settings that will be passed into <a href="http://api.jquery.com/jQuery.ajax/">jQuery.ajax</a>.
+                     *   Any of the options available to that function may be used
+                     *   here, with the exception of the "success" and "error"
+                     *   functions, which are overridden internally.
+                     * </p>
+                     * 
+                     * <code>
+                     * {
+                     *     ajax: {
+                     *         url: "/path/to/controller",
+                     *         data: { method: "some_method" },
+                     *         dataType: "json"
+                     *     }
+                     * }
+                     * </code>
+                     * 
+                     * @see <a href="http://api.jquery.com/jQuery.ajax/">jQuery.ajax</a>
+                     * @default {}
+                     * @type Object
+                     */
+                    ajax: {},
+                    
+                    /**
+                     * JSON data.
+                     * 
+                     * <code>
+                     * {
+                     *     json: {
+                     *         count: 1234,
+                     *         some_other_data: "data",
+                     *         more_custom_data: "not needed by tabulate",
+                     *         rows: {
+                     *             "row1": {...},
+                     *             "row2": {...},
+                     *             ...
+                     *             "row1234": {...}
+                     *         }
+                     *     }
+                     * }
+                     * </code>
+                     * 
+                     * @see <a href="http://jsonlint.com/">JSONLint</a>
+                     * @default {}
+                     * @type Object
+                     */
+                    json: {}
+                },
+                
+                /**
+                 * @namespace Contains the filters to apply to the data set.
+                 */
+                filters: {
+                    /**
+                     * How many items to show per page.
+                     * 
+                     * @default 0
+                     * @type integer
+                     */
+                    limit: 0,
+                    
+                    /**
+                     * The number of items by which to offest our data set.
+                     * 
+                     * @default 0
+                     * @type integer
+                     */
+                    offset: 0
+                }
+            },
+
+            /**
+             * @namespace Contains table sections and filters
+             */
+            table: {
+                /**
+                 * @default Object {}
+                 */
+                rows: {},
+                
+                /**
+                 * @default Object {}
+                 */
+                columns: {}
+            },
             
             /**
-             * Default row element.
+             * Contains the jQuery selectors for key elements.
              * 
-             * @type jQuery
+             * <p>
+             *   Keep in mind that upon initialization these values will be
+             *   replaced by the jQuery object(s) they select.
+             * </p>
+             * 
+             * @see jQuery.tabulate.init
+             * @type Object
+             * @namespace Holds all of our jQuery objects
              */
-            $row: $('<tr class="tabulate-row"></tr>'),
+            $elements: {
+                /**
+                 * The jQuery selector for the "loading" element.  This element is
+                 * activated whenever tabulate is loading.
+                 * 
+                 * @default ".tabulate-loading"
+                 * @type String
+                 */
+                loading: ".tabulate-loading",
+                
+                /**
+                 * The jQuery selector for the "previous" element.  This element
+                 * is bound to the {@link jQuery.tabulate.previous} function.
+                 * 
+                 * @default ".tabulate-prev"
+                 * @type String
+                 */
+                previous: ".tabulate-prev",
+                
+                /**
+                 * The jQuery selector for the "next" element.  This element is 
+                 * bound to the {@link jQuery.tabulate.next} function.
+                 * 
+                 * @default ".tabulate-next"
+                 * @type String
+                 */
+                next: ".tabulate-next",
+                
+                /**
+                 * The jQuery selector for the "count" element.  This element
+                 * stores the value of the {@link jQuery.tabulate.count} variable.
+                 * 
+                 * @default ".tabulate-count"
+                 * @type String
+                 */
+                count: ".tabulate-count",
+                
+                /**
+                 * The jQuery selector for the "total pages" element.  This
+                 * element stores the value of the {@link jQuery.tabulate.total_pages}
+                 * variable.
+                 * 
+                 * @default ".tabulate-total-pages"
+                 * @type String
+                 */
+                total_pages: ".tabulate-total-pages",
+                
+                /**
+                 * The jQuery selector for the "current page" element.  This
+                 * element stores the value of the {@link jQuery.tabulate.current_page}
+                 * variable.
+                 * 
+                 * @default ".tabulate-current-page"
+                 * @type String
+                 */
+                current_page: ".tabulate-current-page",
+                
+                /**
+                 * The jQuery selector for the "results per page" element.  This
+                 * element is bound to the {@link jQuery.tabulate.update_filters}
+                 * function, specifically for updating the "limit" filter.
+                 * 
+                 * @default ".tabulate-results-per-page"
+                 * @type String
+                 */
+                results_per_page: ".tabulate-results-per-page"
+            },
             
             /**
-             * Default cell element.
+             * Contains jQuery objects generated from HTML fragments.
              * 
-             * @type jQuery
+             * <p>
+             *   These fragments are used to generate the table.  Feel free to edit
+             *   the fragments to suit your needs.
+             * </p>
+             * 
+             * @type Object
+             * @namespace Holds all of our jQuery object fragments
              */
-            $cell: $('<td class="tabulate-cell"></td>'),
+            $fragments: {
+                /**
+                 * Default anchor element.
+                 * 
+                 * @type jQuery
+                 */
+                link: $('<a />'),
+                
+                /**
+                 * Default image element.
+                 * 
+                 * @type jQuery
+                 */
+                image: $('<img />'),
+                
+                /**
+                 * Default option element.
+                 * 
+                 * @type jQuery
+                 */
+                option: $('<option />'),
+                
+                /**
+                 * Default row element.
+                 * 
+                 * @type jQuery
+                 */
+                row: $('<tr class="tabulate-row"></tr>'),
+                
+                /**
+                 * Default cell element.
+                 * 
+                 * @type jQuery
+                 */
+                cell: $('<td class="tabulate-cell"></td>'),
+                
+                /**
+                 * Default content element.
+                 * 
+                 * @type jQuery
+                 */
+                content: $('<div class="tabulate-content"></div>'),
+                
+                /**
+                 * Default table element.
+                 * 
+                 * @type jQuery
+                 */
+                table: $('<table class="tabulate-table"></table>'),
+                
+                /**
+                 * Default table head element.
+                 * 
+                 * @type jQuery
+                 */
+                head: $('<thead class="tabulate-header"></thead>'),
+                
+                /**
+                 * Default table body element.
+                 * 
+                 * @type jQuery
+                 */
+                body: $('<tbody class="tabulate-body"></tbody>'),
+                
+                /**
+                 * Default table foot element.
+                 * 
+                 * @type jQuery
+                 */
+                foot: $('<tfoot class="tabulate-footer"></tfoot>'),
+                
+                /**
+                 * Default navigation for the table.
+                 * 
+                 * @type jQuery
+                 */
+                navigation: $(
+                    [
+                        '<div class="tabulate-navigation clearfix">',
+                        '    <div class="tabulate-partition tabulate-partition-first tabulate-pagination">',
+                        '        <img class="tabulate-prev" />',
+                        '        page <input class="tabulate-current-page" type="text" />',
+                        '        of <span class="tabulate-total-pages"></span>',
+                        '        <img class="tabulate-next" />',
+                        '    </div>',
+                        '    <div class="tabulate-partition tabulate-partition-no-input">',
+                        '        <span class="tabulate-count">0</span> total results',
+                        '    </div>',
+                        '    <div class="tabulate-partition tabulate-partition-no-input">',
+                        '        <div class="tabulate-loading"><span>Loading...</span></div>',
+                        '    </div>',
+                        '    <div class="tabulate-partition tabulate-partition-last">',
+                        '        <select class="tabulate-results-per-page"></select> results per page',
+                        '    </div>',
+                        '</div>',
+                    ].join("")
+                )
+            },
             
             /**
-             * Default cell content element.
+             * Can be used to override the default event handlers that are
+             * defined in {@link jQuery.tabulate.event_handlers}.
              * 
-             * @type jQuery
+             * @see jQuery.tabulate.event_handlers
+             * @default {}
+             * @type Object
              */
-            $content: $('<div class="tabulate-cell-content"></div>'),
+            event_handlers: {},
             
             /**
-             * Default table element.
+             * Can be used to override the default error handlers that are
+             * defined in {@link jQuery.tabulate.error_handlers}.
              * 
-             * @type jQuery
+             * @see jQuery.tabulate.error_handlers
+             * @default {}
+             * @type Object
              */
-            $table: $('<table class="tabulate-table"></table>'),
-            
-            /**
-             * Default table head element.
-             * 
-             * @type jQuery
-             */
-            $head: $('<thead class="tabulate-header"></thead>'),
-            
-            /**
-             * Default table body element.
-             * 
-             * @type jQuery
-             */
-            $body: $('<tbody class="tabulate-body"></tbody>'),
-            
-            /**
-             * Default table foot element.
-             * 
-             * @type jQuery
-             */
-            $foot: $(
-                [
-                    '<tfoot class="tabulate-footer">',
-                    '    <tr class="tabulate-row">',
-                    '        <td class="tabulate-cell clearfix">',
-                    '            <div class="tabulate-cell-content">',
-                    '                <div class="tabulate-partition tabulate-partition-first tabulate-pagination">',
-                    '                    <img class="tabulate-prev" />',
-                    '                    page <input class="tabulate-current-page" type="text" />',
-                    '                    of <span class="tabulate-total-pages"></span>',
-                    '                    <img class="tabulate-next" />',
-                    '                </div>',
-                    '                <div class="tabulate-partition tabulate-partition-no-input">',
-                    '                    <span class="tabulate-count">0</span> total results',
-                    '                </div>',
-                    '                <div class="tabulate-partition tabulate-partition-no-input">',
-                    '                    <div class="tabulate-loading"><span>Loading...</span></div>',
-                    '                </div>',
-                    '                <div class="tabulate-partition tabulate-partition-last">',
-                    '                    <select class="tabulate-results-per-page"></select> results per page',
-                    '                </div>',
-                    '            </div>',
-                    '        </td>',
-                    '    </tr>',
-                    '</tfoot>'
-                ].join("")
-            )
+            error_handlers: {}
         },
         
         /**
@@ -679,72 +602,93 @@
         init: function($wrapper, options) {            
             var self = this;
             
+            // extend default options, then attach to this instance
             $.extend(true, this.options, options || {});
             $.extend(true, this, this.options);
-            
+
             this.$wrapper = $wrapper;
+            
+            // store class instance in wrapper
+            this.$wrapper.data("tabulate", this);
+            
+            // append theme path to tabulate path (no trailing "/")
             this.paths.theme = [this.paths.tabulate, this.paths.theme].join("/");
 
             // set limit to first item in results per page array, if not set
-            this.filters.limit = this.filters.limit || this.results_per_page[0];
+            this.data.filters.limit = this.data.filters.limit || this.results_per_page[0];
 
-            // build our table
-            this.$table = this.fragments.$table
-                .append(this.$head = this.fragments.$head)
-                .append(this.$body = this.fragments.$body)
-                .append(this.$foot = this.fragments.$foot);
-
-            // append table and store class instance in data
-            this.$wrapper.append(this.$table).data("tabulate", this);
+            // create table
+            this.$wrapper.append(this.$table = this.$fragments.table)
+            	.append(this.$navigation = this.$fragments.navigation);
+            
+            // build table sections
+            $.each(this.table.columns, function(section, columns) {
+            	self.$table[section] = self.$fragments[section]
+            	self.$table.append(self.$table[section]);
+            });
             
             // build jQuery objects from selectors
-            $.each(this.elements, function(key, selector) {
-                self.elements[key] = $(selector);
+            $.each(this.$elements, function(key, selector) {
+                self.$elements[key] = $(selector);
             });
             
-            // bind previous button
-            this.elements.$previous.attr({
-                src: this.paths.theme + "/prev.gif",
-                alt: "Previous Page",
-                title: "Previous Page"
-            }).click(function() {
-                self.previous(this); return false;
-            });
+            // previous
+            if (this.$elements.previous.length) {
+                this.$elements.previous.attr({
+                    src: this.paths.theme + "/prev.gif",
+                    alt: "Previous Page",
+                    title: "Previous Page"
+                }).click(function() {
+                    self.previous(this); return false;
+                });
+            }
             
-            // bind next button
-            this.elements.$next.attr({
-                src: this.paths.theme + "/next.gif",
-                alt: "Next Page",
-                title: "Next Page"
-            }).click(function() {
-                self.next(this); return false;
-            });
+            // next
+            if (this.$elements.next.length) {
+                this.$elements.next.attr({
+                    src: this.paths.theme + "/next.gif",
+                    alt: "Next Page",
+                    title: "Next Page"
+                }).click(function() {
+                    self.next(this); return false;
+                });
+            }
+            
+            // current page
+            if (this.$elements.current_page.length) {
+                this.$elements.current_page.keyup(function(event) {
+                    var page = parseInt($(this).val());
     
-            // bind current page handler to enter button
-            this.elements.$current_page.keyup(function(event) {
-                var page = parseInt($(this).val());
+                    if (!isNaN(page) && event.which == 13) {
+                        self.go_to(this, page);
+                    }
+                });
+            }
 
-                if (!isNaN(page) && event.which == 13) {
-                    self.go_to(this, page);
-                }
-            });
-    
-            // bind results per page handler
-            this.elements.$results_per_page.change(function() {
-                var limit = parseInt($(this).val());
+            // results per page
+            if (this.$elements.results_per_page.length) {
+                $.each(this.results_per_page, function(i, value) {
+                    self.$elements.results_per_page.append(
+                        self.$fragments.option.clone().val(value).text(value)
+                    );
+                });
+                
+                this.$elements.results_per_page.change(function() {
+                    var limit = parseInt($(this).val());
 
-                if (!isNaN(limit)) {
-                    self.update_filters({limit: limit});
-                }
-            });
+                    if (!isNaN(limit)) {
+                        self.update_filters({limit: limit});
+                    }
+                });
+            }
 
-            // bind custom event handlers
+            // bind event handlers
             $.each(this.event_handlers, function(name, handler) {
                 self.$wrapper.bind([name, self.name].join("."), function() {
                     handler.apply(self, arguments);
                 });
             });
-
+            
             // fire init handler
             this.trigger("post_init");
         },
@@ -766,7 +710,7 @@
                 this.current_page--;
                 
                 this.update_filters({
-                    offset: ((this.current_page - 1) * this.filters.limit)
+                    offset: ((this.current_page - 1) * this.data.filters.limit)
                 });
             }
         },
@@ -787,7 +731,7 @@
                 this.current_page++;
                 
                 this.update_filters({
-                    offset: ((this.current_page - 1) * this.filters.limit)
+                    offset: ((this.current_page - 1) * this.data.filters.limit)
                 });
             }
         },
@@ -810,7 +754,7 @@
                 this.current_page = page;
                 
                 this.update_filters({
-                    offset: ((this.current_page - 1) * this.filters.limit)
+                    offset: ((this.current_page - 1) * this.data.filters.limit)
                 });
             }
         },
@@ -835,7 +779,7 @@
          * @param {object} refresh Whether or not to call the refresh handler. Defaults to true.
          */
         update_filters: function(filters, refresh) {
-            $.extend(true, this.filters, filters || {});
+            $.extend(true, this.data.filters, filters || {});
 
             if (refresh !== false) {
                 this.trigger("refresh");
@@ -843,15 +787,10 @@
         },
         
         /**
-         * Convenience function for handling errors.
-         * 
-         * @param {String} name The name of the error handler.
-         * @param {Array} args The Array of arguments to pass to the handler function.
+         * @param string msg The error message.
          */
-        error: function(name, args) {
-            if (this.error_handlers[name] != "undefined") {
-                this.error_handlers[name].apply(this, args || []);
-            }
+        error: function(msg) {
+            console.log(msg);
         },
         
         /**
@@ -866,11 +805,77 @@
          * @param {Array} args The Array of arguments to pass to the handler function.
          */
         trigger: function(name, args) {
-            this.$wrapper.triggerHandler([name, this.name].join("."), args || []);
+            args = args || [];
+
+            this.$wrapper.triggerHandler([name, this.name].join("."), ($.isArray(args) ? args : [args]));
         },
         
         /**
-         * Sets properties for the rows and columns of the table.
+         * Gathers the data needed for tabulation.
+         * 
+         * <p>
+         *   Data can either be passed in explicitly or loaded via jQuery.ajax.
+         *   This function expects a "request" parameter, however, if none is
+         *   passed it will use the default data request object that was passed
+         *   into tabulate upon initialization.
+         * </p>
+         * 
+         * <p>
+         *   If a request is found, this function will trigger
+         *   {@link jQuery.tabulate.event_handlers.event:loading} with <em>true</em>
+         *   as its argument, effectively turning it on. After the data type is
+         *   determined and the data has been gathered this function will
+         *   trigger {@link jQuery.tabulate.event_handlers.event:post_load} with the
+         *   data object as its argument.  It is important to note that if both
+         *   an AJAX request and a JSON object are passed to this function, the
+         *   result of the two will be merged together before being passed to
+         *   the post_load event handler.
+         * </p>
+         * 
+         * @see jQuery.tabulate.options.data
+         * @see jQuery.tabulate.event_handlers
+         * 
+         * @param {object} request The request object.
+         * @param {object} filters Filters that will apply to this request only.
+         */
+        gather_data: function(request, filters) {
+            var self = this, data = {},
+                request = request || {},
+                filters = filters || {};
+            
+            this.trigger("loading", true);
+            
+            if (request.ajax && !$.isEmpty(request.ajax)) {
+                filters = $.extend(true, {}, this.data.filters, filters);
+                
+                // merge request with additional internal arguments
+                var request = $.extend(true, {}, request.ajax, {
+                    data: filters,
+                    success: function(data) {
+                        // merge in static JSON content, if any
+                        $.extend(true, data, request.json || {});
+                        
+                        // fire post load handler
+                        self.trigger("post_load", data);
+                    },
+                    error: this.error_handlers.ajax
+                });
+                
+                $.ajax(request);
+            }
+
+            else {
+
+                if (request.json && !$.isEmpty(request.json)) {
+                    data = request.json;
+                }
+
+                this.trigger("post_load", data);
+            }
+        },
+        
+        /**
+         * Applies properties to rows, columns and cells in the table.
          * 
          * <p>
          *   Each row or column in the table may have any number of properties
@@ -984,335 +989,254 @@
          * 
          * @return {jQuery} The modified element
          */
-        set_properties: function($element, properties) {
-            if ($element && typeof properties == "object") {
-                var self = this,
-                    tag = $element.attr("tagName").toLowerCase();
-                
-                // These properties apply to cells only
-                if (tag == "td") {
-                    var data = properties.data || {},
-                        $content = properties.$content || $element;
+        apply_properties: function($element, settings, properties) {
+            var self = this,
+                properties = properties || {},
+                dataset = settings.dataset || {},
+                key = (typeof settings.key != "undefined" ? settings.key : "");
 
-                    if (properties.content && properties.content.length) {
-                        if (typeof properties.content == "string") {
-                            $content.html(properties.content.replace(this.parse_key(), function(str, key) {
-                                return $.getNestedKey(key, data) || ""; // replace with value, or empty string
-                            }));
-                        }
-    
-                        else if (properties.content instanceof jQuery) {
-                            $content.append(properties.content);
-                        }
+            $element.each(function(i, element) {
+                var $element = $(element),
+                    data = (dataset[key] ? dataset[key] : dataset),
+                    name = ($.isNumber(key) ? parseInt(key) + 1 : key),
+                    $content = $(".tabulate-content", $element),
+                    args = [$element, $content, data];
+
+                // content defaults to element if not present
+                if (!$content.length) $content = $element;
+
+                // apply type class
+                if (typeof settings.type == "string") {
+                    $element.addClass([self.name, settings.type, name].join("-"));
+                }
+                
+                // set up properties according to type
+                switch(typeof properties) {
+	                case "string": {
+	                	properties = { content: properties };
+	                	break;
+	                }  
+	                case "function": {
+                        properties = { content: properties.apply(self, args) };
+                        break;
                     }
                 }
-                
-                if (typeof properties.styles == "object") {
-                    $element.css(properties.styles);
-                }
-                
-                if (typeof properties.callback == "function") {
-                    properties.callback.apply(this, properties.args || []);
-                }
-                
-                if (typeof properties.event_handlers == "object") {
-                    $.each(properties.event_handlers, function(name, handler) {
-                        $element.bind(name, function(event) {
-                            handler.apply(self, [event, $element, data || {}]);
-                        });
-                    });
-                }
-            }
-            
-            return $element;
-        },
-        
-        /**
-         * Gathers the data needed for tabulation.
-         * 
-         * <p>
-         *   Data can either be passed in explicitly or loaded via jQuery.ajax.
-         *   This function expects a "request" parameter, however, if none is
-         *   passed it will use the default data request object that was passed
-         *   into tabulate upon initialization.
-         * </p>
-         * 
-         * <p>
-         *   If a request is found, this function will trigger
-         *   {@link jQuery.tabulate.event_handlers.event:loading} with <em>true</em>
-         *   as its argument, effectively turning it on. After the data type is
-         *   determined and the data has been gathered this function will
-         *   trigger {@link jQuery.tabulate.event_handlers.event:post_load} with the
-         *   data object as its argument.  It is important to note that if both
-         *   an AJAX request and a JSON object are passed to this function, the
-         *   result of the two will be merged together before being passed to
-         *   the post_load event handler.
-         * </p>
-         * 
-         * @see jQuery.tabulate.options.data
-         * @see jQuery.tabulate.event_handlers
-         * 
-         * @param {object} request The request object.
-         * @param {object} filters Filters that will apply to this request only.
-         */
-        load: function(request, filters) {
-            request = request || this.data;
-            
-            if (request) {
-                this.trigger("loading", [true]);
 
-                // use AJAX load to get our data
-                if (typeof request.ajax == "object" && !$.isEmpty(request.ajax)) {
-                    var self = this;
-
-                    // update filters
-                    filters = $.extend(true, {}, this.filters, filters);
-                    
-                    // merge request with additional internal arguments
-                    var request = $.extend(true, {}, request.ajax, {
-                        data: filters,
-                        cache: this.cache_requests,
-                        success: function(data) {
-                            // merge in static JSON content, if any
-                            $.extend(true, data, request.json || {});
-                            
-                            // fire post load handler
-                            self.trigger("post_load", [data]);
-                        },
-                        error: function() {
-                            self.error("ajax", arguments);
-                        }
-                    });
-                    
-                    // fire AJAX request
-                    $.ajax(request);
+                // properties must be an object
+                if (typeof properties == "object") {
+	                $.each(properties, function(property, value) {
+	                	switch(property) {
+	                		case "attributes": {
+	                			$element.attr(value);
+	                			break;
+	                		}
+	                		case "content": {
+	    	                    if (typeof value == "function") {
+	    	                    	value = value.apply(self, args);
+	    	                    }
+	    	                    
+	    	                    switch(typeof value) {
+	    	                        case "object": {
+	    	                            if (value instanceof $) {
+	    	                                $content.append(value);
+	    	                            }
+	    	                            break;
+	    	                        }
+	    	                        default: {
+	    	                            $content.append(value.replace(self.parse_key(), function(str, key) {
+	    	                                return $.getNestedKey(key, dataset) || "";
+	    	                            }));
+	    	                            break;
+	    	                        }
+	    	                    }
+	                			break;
+	                		}
+	                		case "class_name": {
+	    	                    switch (typeof value) {
+	    	                        case "function": {
+	    	                            $element.addClass(value.apply(self, args));
+	    	                            break;
+	    	                        }
+	    	                        default: {
+	    	                            $element.addClass(value);
+	    	                            break;
+	    	                        }
+	    	                    }
+	                			break;
+	                		}
+	                		case "events": {
+	    	                    $.each(value, function(name, handler) {
+	    	                        $element.bind(name, function(event) {
+	    	                            handler.apply(self, [event].concat(args));
+	    	                        });
+	    	                    });
+	                			break;
+	                		}
+	                		case "filter": {
+	                			value.apply(self, args);
+	                			break;
+	                		}
+	                		case "styles": {
+	                			$element.css(value);
+	                			break;
+	                		}
+	                	}
+	                });
                 }
-    
-                // use static JSON data
-                else if (typeof request.json == "object" && !$.isEmpty(request.json)) {
-                    this.trigger("post_load", [request.json]);
-                }
-            }
+            });
         },
 
         /**
          * Given data, builds a tabular view of that data.
          * 
          * <p>
-         *   This is the heart and soul of the tabulate plugin.  The data fed to
-         *   this plugin is generally fed from the {@link jQuery.tabulate.load}
-         *   function, but data may be passed directly in from another source if
-         *   needed.  Just be sure that you have mapped your keys correctly upon
-         *   initialization.
+         *   This function fires {@link jQuery.tabulate.post_tabulate} when
+         *   it finishes.
          * </p>
          * 
-         * <p>
-         *   Apart from generating the table, this function also clears out any
-         *   previous table data, updates any statistical information (such as
-         *   the record count and number of pages) and applies any additional
-         *   properties to rows and columns via the {@link jQuery.tabulate.set_properties}
-         *   function.  Helpful identifying classes are also added for
-         *   convenience, such as "first" and "last" for the first and last row
-         *   or column, and "odd" and "even" for odd and even numbered rows.
-         * </p>
-         * 
-         * <p>
-         *   If for some reason we were not able to locate the rows data, most
-         *   likely due to a missing or erroneous key, or an empty result set,
-         *   table generation will be skipped and a message will be logged to
-         *   the console (assuming it is enabled).  Finally, this function will
-         *   fire the {@link jQuery.tabulate.event_handlers.event:loading} event handler,
-         *   passing in false as an argument, effectively turning it off, and
-         *   then fire the {@link jQuery.tabulate.event_handlers.event:post_tabulate}
-         *   handler for any additional post-processing.
-         * </p>
-         * 
-         * @see jQuery.tabulate.event_handlers
-         * @param {object} data The JSON data to tabulate upon.
+         * @param object data The object containing the data to tabulate.
          */
         tabulate: function(data) {
             var self = this,
-                $row = this.fragments.$row.clone(),
-                rows = $.getNestedKey(this.keys.rows, data) || {},
-                columns = $.getNestedKey(this.keys.columns, data) || {};
-
-            // store data statistics
-            this.count = data[this.keys.count] || $.getLength(rows);
-            this.total_pages = Math.ceil(this.count / this.filters.limit) || 1;
-
+                data = data || {};
+            
             // clear out the old data
-            this.$head.empty();
-            this.$body.empty();
+            this.$table.children().empty();
             
-            // rows is empty or missing
-            if ($.isEmpty(rows)) {
-                this.error("tabulate", arguments);
-            }
+            // build out new data
+            $.each(this.table.columns, function(key, column) {
+            	self.columns = Math.max(self.columns, $.getLength(column));
+            	self.build_section(key, self.$table[key], $.getNestedKey(self.keys[key], data));
+            });
 
-            // we've got data to work with
-            else {
-                // build table head
-                $.each(this.columns, function(c, column) {
-                    var c = ($.isNumber(c) ? parseInt(c) + 1 : c),
-                        $cell = self.fragments.$cell.clone(),
-                        $content = self.fragments.$content.clone(),
-                        properties = $.extend({}, {
-                            args: [$row, $cell, $content],
-                            data: $.getNestedKey(c, columns),
-                            name: c,
-                            $content: $content
-                        }, column.head);
-
-                    $cell.attr("id", self.name + "-column-" + c + "-head")
-                        .addClass("column-" + c);
-                 
-                    self.set_properties($cell, properties);
-                    $row.append($cell.append($content));
-                });
-
-                $row.find("td:first").addClass("tabulate-cell-first");
-                $row.find("td:last").addClass("tabulate-cell-last");
-                
-                this.$head.append($row);
-    
-                // build table body
-                $.each(rows, function(r, row_data) {
-                    var r = ($.isNumber(r) ? parseInt(r) + 1 : r),
-                        render = false, // whether or not to append this row
-                        $row = self.fragments.$row.clone();
-                    
-                    // build cells
-                    $.each(self.columns, function(c, column_data) {                    
-                        var c = ($.isNumber(c) ? parseInt(c) + 1 : c),
-                            $cell = self.fragments.$cell.clone(),
-                            $content = self.fragments.$content.clone(),
-                            properties = $.extend({}, {
-                                data: row_data,
-                                args: [$row, $cell, $content, row_data],
-                                name: c,
-                                $content: $content
-                            }, column_data.body);
-                        
-                        $cell.hover(function() {
-                            $(this).addClass("tabulate-cell-hover");
-                        }, function() {
-                            $(this).removeClass("tabulate-cell-hover");
-                        });
-                        
-                        $cell.attr("id", self.name + "-column-" + c + "-body")
-                            .data("location", {row: r, column: c})
-                            .addClass("column-" + c);
-    
-                        self.set_properties($cell, properties);
-                        $row.append($cell.append($content));
-                        
-                        // set render to true if we have cell content
-                        if (!render && $content.html()) render = true;
-                    });
-    
-                    // at least one column needs content to append row
-                    if (render) {
-                        var properties = $.extend({}, {
-                                data: row_data,
-                                args: [$row, row_data],
-                                name: r
-                            }, self.rows);
-
-                        $row.hover(function() {
-                            $(this).addClass("tabulate-row-hover");
-                        }, function() {
-                            $(this).removeClass("tabulate-row-hover");
-                        });
-
-                        $row.find("td:first").addClass("tabulate-cell-first");
-                        $row.find("td:last").addClass("tabulate-cell-last");
-                        
-                        $row.attr("id", self.name + "-row-" + r)
-                            .data("data", row_data);
-                        
-                        self.set_properties($row, properties);
-                        self.$body.append($row);
-                    }
-                });
-
-                this.$body.find("tr:odd").addClass("tabulate-row-odd");
-                this.$body.find("tr:even").addClass("tabulate-row-even");
-                this.$body.find("tr:first").addClass("tabulate-row-first");
-                this.$body.find("tr:last").addClass("tabulate-row-last");
-            }
+            // get count from data, or use number of body properties
+            this.count = data[this.keys.count] || $.getLength(this.table.columns[this.keys.body]) ||  0;
             
+            // total pages = count / limit (or 1, if count or limit = 0)
+            this.total_pages = Math.ceil(this.count / this.data.filters.limit) || 1;
+
+            // add cell hovers
+            this.$table.find(".tabulate-cell").hover(
+                function() { $(this).addClass("tabulate-hover"); },
+                function() { $(this).removeClass("tabulate-hover") }
+            );
+
+            // add row classes
+            this.$table.body.find(".tabulate-row:odd").addClass("tabulate-odd");
+            this.$table.body.find(".tabulate-row:even").addClass("tabulate-even");
+            this.$table.body.find(".tabulate-row:first").addClass("tabulate-first");
+            this.$table.body.find(".tabulate-row:last").addClass("tabulate-last");
+
             // fire handlers
-            this.trigger("loading", [false]);
-            this.trigger("post_tabulate", [data]);
+            this.trigger("loading", false);
+            this.trigger("post_tabulate", data);
         },
         
         /**
-         * Custom event handlers for tabulate.
+         * Builds and appends a section of the table.
+         * 
+         * @param string name The name of the section
+         * @param jQuery $element The element to append rows to
+         * @param object data The data to populate the section with
+         * 
+         * @return integer The number of columns in the section.
+         */
+        build_section: function(section, $element, data) {
+            var self = this,
+                data = data || {};
+
+            if ($element && $element.length) {
+                // build rows
+                $.each(data, function(r, row) {
+                    var empty = true,
+                        r = r.toString(),
+                        $row = self.$fragments.row.clone();
+                    
+                    // build cells
+                    $.each(row, function(c, column) {
+                        var c = c.toString(),
+                            $cell = self.$fragments.cell.clone(),
+                            $content = self.$fragments.content.clone();
+                            
+                        $cell.append($content);
+                        
+                        self.apply_properties($cell, {
+                            key: c,
+                            type: "column",
+                            dataset: data[r]
+                        }, $.getNestedKey(c, self.table.columns[section]) || {});
+
+                        $row.append($cell);
+                        
+                        // set render to true if we have cell content
+                        if (empty && $content.html()) empty = false;
+                    });
+                
+                    // at least one column needs content to append row
+                    if (!empty) {
+                    	self.apply_properties($row, {
+                            key: r,
+                            type: "row",
+                            dataset: data
+                        }, $.getNestedKey(r, self.table.rows[section]) || {});
+                        
+                        $row.find(".tabulate-cell:first").addClass("tabulate-first");
+                        $row.find(".tabulate-cell:last").addClass("tabulate-last");
+    
+                        $element.append($row);
+                    }
+                });
+            }
+        },
+        
+        /**
+         * Contains the event handlers that are attached to the $wrapper.
          * 
          * <p>
-         *   Each event handler is a key/value pair, where the key represents
-         *   the name of the event, prefixed by the name of the class instance
-         *   and the name assigned to the row/cell, and the value should be the
-         *   callback function to be executed when the event is fired.
+         *   These handlers can be overridden by those passed into the plugin.
          * </p>
          * 
-         * <p>
-         *   The defined callback function will be invoked using javaScript's
-         *   built-in "apply" function, meaning it can take an arbitrary amount
-         *   of arguments that will be passed directly to the callback function.
-         * </p>
-         * 
-         * <p>
-         *   Each of these default handlers may be overwritten by the user as
-         *   they see fit by passing new callback functions into the options
-         *   object upon class initialization.
-         * </p>
-         * 
+         * @see jQuery.tabulate.$wrapper
          * @see jQuery.tabulate.options.event_handlers
-         * @type object
-         * @namespace Contains the event handlers for {@link jQuery.tabulate}
+         * 
+         * @namespace
          */
         event_handlers: {
             /**
              * Generally called when data needs to be re-loaded.
              * 
-             * <p>
-             *   By default, triggers {@link jQuery.tabulate.load}.
-             * </p>
+             * @see The jQuery <a href="http://api.jquery.com/category/events/event-object/">Event</a> Object
+             * 
+             * @param object event The jQuery.Event object
+             * @param object request The data request object
+             * @param object filters Filters to apply to the request
              * 
              * @event
-             * @see The jQuery <a href="http://api.jquery.com/category/events/event-object/">Event</a> Object
-             * @param {object} event The jQuery Event Object
-             * @param {object} data The data source to use ({@link $.tabulate.data} by default).
-             * @param {object} filters Filters to apply to this load request only.
              */
-            refresh: function(event, data, filters) {
-                this.load(data || this.data, filters || {});
+            refresh: function(event, request, filters) {
+                this.gather_data(request || this.data.source, filters || {});
             },
             
             /**
-             * Toggles the loading element.
+             * Shows or hides the loading element.
              * 
-             * <p>
-             *   Adds or removes the "loading" class from said element.  If the
-             *   <em>bool</em> parameter is not passed, the class will be
-             *   toggled.
-             * </p>
-             * 
-             * @event
              * @see jQuery.tabulate.options.elements.$loading
              * @see The jQuery <a href="http://api.jquery.com/category/events/event-object/">Event</a> Object
-             * @param {object} event The jQuery Event Object
-             * @param {boolean} bool Whether to enable or disable loading.
+             * 
+             * @param object event The jQuery.Event Object
+             * @param boolean bool (optional) Whether or not to show the loading
+             *        element. By default, the element will be toggled.
+             * 
+             * @event
              */
             loading: function(event, bool) {
                 if (typeof bool == "boolean") {
-                    this.elements.$loading[(bool ? "addClass" : "removeClass")]("loading");
+                    this.$elements.loading[(bool ? "addClass" : "removeClass")]("loading");
                 } else {
-                    this.elements.$loading.toggleClass("loading");
+                    this.$elements.loading.toggleClass("loading");
                 }
             },
-            
+
             /**
              * Called after {@link jQuery.tabulate.init} finishes processing.
              * 
@@ -1322,25 +1246,13 @@
              *   and then triggers {@link jQuery.tabulate.event_handlers.event:refresh}.
              * </p>
              * 
-             * @event
              * @see The jQuery <a href="http://api.jquery.com/category/events/event-object/">Event</a> Object
              * @param {object} event The jQuery Event Object
+             * 
+             * @event
              */
             post_init: function(event) {
-                var self = this;
-
-                // add colspan to footer (note the capital S in colSpan, IE/jQuery bug!)
-                this.$foot.find(".tabulate-cell").attr("colSpan", $.getLength(this.columns));
-                
-                // build results per page dropdown
-                $.each(this.results_per_page, function(i, value) {
-                    self.elements.$results_per_page.append(
-                        self.fragments.$option.clone().val(value).text(value)
-                    );
-                });
-                
-                // load our data
-                this.trigger("refresh");
+                this.gather_data(this.data.source);
             },
             
             /**
@@ -1350,9 +1262,10 @@
              *   By default, triggers {@link jQuery.tabulate.tabulate}.
              * </p>
              * 
-             * @event
              * @see The jQuery <a href="http://api.jquery.com/category/events/event-object/">Event</a> Object
              * @param {object} event The jQuery Event Object
+             * 
+             * @event
              */
             post_load: function(even, data) {
                 this.tabulate(data);
@@ -1365,67 +1278,54 @@
              *   By default, updates statistical information in the footer.
              * </p>
              * 
-             * @event
              * @see The jQuery <a href="http://api.jquery.com/category/events/event-object/">Event</a> Object
              * @param {object} event The jQuery Event Object
              * @param {object} data The data object that was passed into {@link jQuery.tabulate.tabulate}.
+             * 
+             * @event
              */
             post_tabulate: function(event, data) {
-                this.elements.$count.text(this.count);
-                this.elements.$total_pages.text(this.total_pages);
-                this.elements.$current_page.val(this.current_page);
+                this.$elements.count.text(this.count);
+                this.$elements.total_pages.text(this.total_pages);
+                this.$elements.current_page.val(this.current_page);
             }
         },
         
         /**
-         * Custom error handlers for tabulate.
+         * Contains any error handlers that are needed by the plugin.
          * 
          * <p>
-         *   If tabulate encounters an error, it will generally pass it on to
-         *   these functions.  These may be overridden by the user upon class
-         *   initialization.
+         *   These handlers can be overridden by those passed into the plugin.
          * </p>
          * 
-         * @type object
-         * @namespace Contains the error handlers for {@link jQuery.tabulate}
+         * @see jQuery.tabulate.$wrapper
+         * @see jQuery.tabulate.options.error_handlers
+         * 
+         * @namespace
          */
         error_handlers: {
             /**
-             * Handles AJAX request errors generated in {@link jQuery.tabulate.load}.
-             * 
-             * <p>
-             *   This function is generally called if an AJAX request failed to
-             *   reach the controller for some reason.  Make sure the URL you
-             *   are using is correct.
-             * </p>
+             * Handles AJAX request errors.
              * 
              * @see <a href="http://api.jquery.com/jQuery.ajax/">jQuery.ajax</a>
              * 
-             * @param {object} XMLHttpRequest The XMLHttpRequest Object
-             * @param {string} textStatus A String describing the type of error that occurred
-             * @param {exception} errorThrown An exception object, if one occurred
+             * @param object xhr The XMLHttpRequest Object
+             * @param string status A String describing the type of error that occurred
+             * @param exception error An exception object, if one occurred
              */
-            ajax: function(XMLHttpRequest, textStatus, errorThrown) {
-                // log error information to console
-                console.log(this.toString() + " Error: " + textStatus, XMLHttpRequest, errorThrown);
-
-                // alert the user with the status code and text.
-                alert(XMLHttpRequest.status + ": " + (XMLHttpRequest.statusText || "Unknown error."));
-            },
-            
-            /**
-             * Handles errors generated in {@link jQuery.tabulate.tabulate}.
-             * 
-             * <p>
-             *   This function will be called if the rows key was not found in
-             *   the dataset, or if the value returned by that key was empty.
-             * </p>
-             * 
-             * @param {object} data The data that was passed into {@link jQuery.tabulate.tabulate}.
-             */
-            tabulate: function(data) {
-                console.log(this.toString() + " Warning: '" + this.keys.rows + "' is empty or missing.");
+            ajax: function(xhr, status, error) {
+                console.log(xhr, status, error);
+                alert(xhr.status + ": " + (xhr.statusText || "Unknown error."));
             }
+        },
+        
+        /**
+         * Object.toString override
+         * 
+         * @return String "[object instance.name]"
+         */
+        toString: function() {
+            return "[object " + this.name + "]";
         }
     };
 })(jQuery);
