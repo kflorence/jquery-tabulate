@@ -619,12 +619,12 @@
 
             // create table
             this.$wrapper.append(this.$table = this.$fragments.table)
-            	.append(this.$navigation = this.$fragments.navigation);
+                .append(this.$navigation = this.$fragments.navigation);
             
             // build table sections
             $.each(this.table.columns, function(section, columns) {
-            	self.$table[section] = self.$fragments[section]
-            	self.$table.append(self.$table[section]);
+                self.$table[section] = self.$fragments[section]
+                self.$table.append(self.$table[section]);
             });
             
             // build jQuery objects from selectors
@@ -1012,11 +1012,11 @@
                 
                 // set up properties according to type
                 switch(typeof properties) {
-	                case "string": {
-	                	properties = { content: properties };
-	                	break;
-	                }  
-	                case "function": {
+                    case "string": {
+                        properties = { content: properties };
+                        break;
+                    }  
+                    case "function": {
                         properties = { content: properties.apply(self, args) };
                         break;
                     }
@@ -1024,64 +1024,64 @@
 
                 // properties must be an object
                 if (typeof properties == "object") {
-	                $.each(properties, function(property, value) {
-	                	switch(property) {
-	                		case "attributes": {
-	                			$element.attr(value);
-	                			break;
-	                		}
-	                		case "content": {
-	    	                    if (typeof value == "function") {
-	    	                    	value = value.apply(self, args);
-	    	                    }
-	    	                    
-	    	                    switch(typeof value) {
-	    	                        case "object": {
-	    	                            if (value instanceof $) {
-	    	                                $content.append(value);
-	    	                            }
-	    	                            break;
-	    	                        }
-	    	                        default: {
-	    	                            $content.append(value.replace(self.parse_key(), function(str, key) {
-	    	                                return $.getNestedKey(key, dataset) || "";
-	    	                            }));
-	    	                            break;
-	    	                        }
-	    	                    }
-	                			break;
-	                		}
-	                		case "class_name": {
-	    	                    switch (typeof value) {
-	    	                        case "function": {
-	    	                            $element.addClass(value.apply(self, args));
-	    	                            break;
-	    	                        }
-	    	                        default: {
-	    	                            $element.addClass(value);
-	    	                            break;
-	    	                        }
-	    	                    }
-	                			break;
-	                		}
-	                		case "events": {
-	    	                    $.each(value, function(name, handler) {
-	    	                        $element.bind(name, function(event) {
-	    	                            handler.apply(self, [event].concat(args));
-	    	                        });
-	    	                    });
-	                			break;
-	                		}
-	                		case "filter": {
-	                			value.apply(self, args);
-	                			break;
-	                		}
-	                		case "styles": {
-	                			$element.css(value);
-	                			break;
-	                		}
-	                	}
-	                });
+                    $.each(properties, function(property, value) {
+                        switch(property) {
+                            case "attributes": {
+                                $element.attr(value);
+                                break;
+                            }
+                            case "content": {
+                                if (typeof value == "function") {
+                                    value = value.apply(self, args);
+                                }
+                                
+                                switch(typeof value) {
+                                    case "object": {
+                                        if (value instanceof $) {
+                                            $content.append(value);
+                                        }
+                                        break;
+                                    }
+                                    default: {
+                                        $content.append(value.replace(self.parse_key(), function(str, key) {
+                                            return $.getNestedKey(key, dataset) || "";
+                                        }));
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+                            case "class_name": {
+                                switch (typeof value) {
+                                    case "function": {
+                                        $element.addClass(value.apply(self, args));
+                                        break;
+                                    }
+                                    default: {
+                                        $element.addClass(value);
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+                            case "events": {
+                                $.each(value, function(name, handler) {
+                                    $element.bind(name, function(event) {
+                                        handler.apply(self, [event].concat(args));
+                                    });
+                                });
+                                break;
+                            }
+                            case "filter": {
+                                value.apply(self, args);
+                                break;
+                            }
+                            case "styles": {
+                                $element.css(value);
+                                break;
+                            }
+                        }
+                    });
                 }
             });
         },
@@ -1105,8 +1105,8 @@
             
             // build out new data
             $.each(this.table.columns, function(key, column) {
-            	self.columns = Math.max(self.columns, $.getLength(column));
-            	self.build_section(key, self.$table[key], $.getNestedKey(self.keys[key], data));
+                self.columns = Math.max(self.columns, $.getLength(column));
+                self.build_section(key, self.$table[key], $.getNestedKey(self.keys[key], data));
             });
 
             // get count from data, or use number of body properties
@@ -1174,7 +1174,7 @@
                 
                     // at least one column needs content to append row
                     if (!empty) {
-                    	self.apply_properties($row, {
+                        self.apply_properties($row, {
                             key: r,
                             type: "row",
                             dataset: data
