@@ -6,10 +6,14 @@
         <title>jQuery Tabulate Plugin</title>       
         
         <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
-        <script type="text/javascript" src="/jquery-utility/src/jquery.utility.js"></script>
         <script type="text/javascript" src="/jquery-tabulate/src/jquery.tabulate.js"></script>
-        
         <link type="text/css" rel="stylesheet" href="/jquery-tabulate/src/themes/default/styles.css" />
+        <style type="text/css">
+            a.api {
+                color: #000;
+                margin-top: 10px;
+            }
+        </style>
         
         <script type="text/javascript">
         var data = {
@@ -41,10 +45,6 @@
 
         jQuery(function($) {
             $(".tabulate").tabulate({
-                paths: {
-                    tabulate: "/include/jquery/plugin/tabulate",
-                    theme: "themes/vtoc"
-                },
                 data: {
                     source: {
                         json: data
@@ -95,5 +95,6 @@
     </head>
     <body>
         <div class="tabulate"></div>
+        <p>See: <a href="api/index.html" class="api">API Documentation</a></p>
     </body>
 </html>
