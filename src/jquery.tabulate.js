@@ -655,7 +655,7 @@
 
             // build table sections
             $.each(this.table.columns, function(section, columns) {
-                self.$table[section] = self.$fragments[section]
+                self.$table[section] = self.$fragments[section];
                 self.$table.append(self.$table[section]);
             });
 
