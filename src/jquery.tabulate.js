@@ -39,7 +39,7 @@
 /**
  * @fileOverview The jQuery.tabulate plugin.
  * @author <a href="mailto:kyle.florence@gmail.com">Kyle Florence</a>
- * @version 1.0.20100610
+ * @version 2.1.20100920
  */
 
 /**
@@ -273,10 +273,10 @@
                  *   {@link jQuery.tabulate.options.paths.tabulate}.
                  * </p>
                  * 
-                 * @default "themes/default"
+                 * @default "src/themes/default"
                  * @type String
                  */
-                theme: "themes/default"
+                theme: "src/themes/default"
             },
 
             /**
@@ -314,61 +314,57 @@
              */
             data: {
                 /**
+                 * Contains data sources to work upon.
+                 * 
+                 * <p>
+                 *   Data sources are defined as a key/value pair within the
+                 *   source object.  The following are valid data sources:
+                 * </p>
+                 * 
+                 * <ul>
+                 *   <li>
+                 *     <strong>json</strong> - Pure JSON data. Example: <br />
+                 *     <code>
+                 *         {
+                 *             count: 1234,
+                 *             some_other_data: "data",
+                 *             more_custom_data: "not needed by tabulate",
+                 *             rows: [
+                 *                 {
+                 *                     "col1": "row 1 column 1 data",
+                 *                     "col2": "row 1 column 2 data",
+                 *                     "col3": "row 1 column 3 data"
+                 *                 }
+                 *                 ...
+                 *                 {
+                 *                     "col1": "row 50 column 1 data",
+                 *                     "col2": "row 50 column 2 data",
+                 *                     "col3": "row 50 column 3 data"
+                 *                 }
+                 *             ]
+                 *         }
+                 *     </code>
+                 *   </li>
+                 *   <li>
+                 *     <strong>ajax</strong> - A  <a href="http://api.jquery.com/jQuery.ajax/">jQuery.ajax</a> request object.<br /><br />
+                 *     These settings that will be passed into the native jQuery.ajax function.
+                 *     Any of the options available to that function may be used
+                 *     here, with the exception of the "success" and "error"
+                 *     functions, which are overridden internally. Example: <br />
+                 *     <code>
+                 *         {
+                 *             url: "/path/to/controller",
+                 *             data: { method: "some_method" },
+                 *             dataType: "json"
+                 *         }
+                 *     </code>
+                 *   </li>
+                 * </ul>
+                 * 
                  * @type Object
                  * @namespace Holds information about the source of our data.
                  */
-                source: {
-                    /**
-                     * The settings for an AJAX request.
-                     * 
-                     * <p>
-                     *   These settings that will be passed into <a href="http://api.jquery.com/jQuery.ajax/">jQuery.ajax</a>.
-                     *   Any of the options available to that function may be used
-                     *   here, with the exception of the "success" and "error"
-                     *   functions, which are overridden internally.
-                     * </p>
-                     * 
-                     * <code>
-                     * {
-                     *     ajax: {
-                     *         url: "/path/to/controller",
-                     *         data: { method: "some_method" },
-                     *         dataType: "json"
-                     *     }
-                     * }
-                     * </code>
-                     * 
-                     * @see <a href="http://api.jquery.com/jQuery.ajax/">jQuery.ajax</a>
-                     * @default undefined
-                     * @type Object
-                     */
-                    ajax: undefined,
-
-                    /**
-                     * JSON data.
-                     * 
-                     * <code>
-                     * {
-                     *     json: {
-                     *         count: 1234,
-                     *         some_other_data: "data",
-                     *         more_custom_data: "not needed by tabulate",
-                     *         rows: {
-                     *             "row1": {...},
-                     *             "row2": {...},
-                     *             ...
-                     *             "row1234": {...}
-                     *         }
-                     *     }
-                     * }
-                     * </code>
-                     * 
-                     * @see <a href="http://jsonlint.com/">JSONLint</a>
-                     * @default undefined
-                     * @type Object
-                     */
-                    json: undefined
-                },
+                source: {},
 
                 /**
                  * @namespace Contains the filters to apply to the data set.
@@ -393,19 +389,16 @@
             },
 
             /**
-             * @namespace Contains table sections and filters
+             * The different sections of the table.  Any values may be used here,
+             * just remember to include a fragment of the same name inside
+             * of {@link jQuery.tabulate.$fragments.sections}. Fragments for
+             * "head", "body" and "foot" have been created for default use.
+             * 
+             * @type mixed
+             * @default ["body"]
+             * @namespace Contains the name of table sections and their applicable options
              */
-            table: {
-                /**
-                 * @default Object {}
-                 */
-                rows: {},
-
-                /**
-                 * @default Object {}
-                 */
-                columns: {}
-            },
+            table: ["body"],
 
             /**
              * Contains the jQuery selectors for key elements.
@@ -549,25 +542,31 @@
                 table: $('<table class="tabulate-table"></table>'),
 
                 /**
-                 * Default table head element.
-                 * 
-                 * @type jQuery
+                 * @type Object
+                 * @namespace Holds the table section fragments.
                  */
-                head: $('<thead class="tabulate-header"></thead>'),
-
-                /**
-                 * Default table body element.
-                 * 
-                 * @type jQuery
-                 */
-                body: $('<tbody class="tabulate-body"></tbody>'),
-
-                /**
-                 * Default table foot element.
-                 * 
-                 * @type jQuery
-                 */
-                foot: $('<tfoot class="tabulate-footer"></tfoot>'),
+                sections: {
+                    /**
+                     * Default "head" section element.
+                     * 
+                     * @type jQuery
+                     */
+                    head: $('<thead class="tabulate-header"></thead>'),
+    
+                    /**
+                     * Default "body" section element.
+                     * 
+                     * @type jQuery
+                     */
+                    body: $('<tbody class="tabulate-body"></tbody>'),
+    
+                    /**
+                     * Default "foot" section element.
+                     * 
+                     * @type jQuery
+                     */
+                    foot: $('<tfoot class="tabulate-footer"></tfoot>')
+                },
 
                 /**
                  * Default navigation for the table.
@@ -644,7 +643,7 @@
             this.$wrapper.data("tabulate", this);
 
             // append theme path to tabulate path (no trailing "/")
-            this.paths.theme = [this.paths.tabulate, this.paths.theme].join("/");
+            this.paths.theme = [this.paths.tabulate, this.paths.theme].join("");
 
             // set limit to first item in results per page array, if not set
             this.data.filters.limit = this.data.filters.limit || this.results_per_page[0];
@@ -654,8 +653,9 @@
                 .append(this.$navigation = this.$fragments.navigation);
 
             // build table sections
-            $.each(this.table.columns, function(section, columns) {
-                self.$table[section] = self.$fragments[section];
+            $.each(this.table, function(key, value) {
+                var section = (typeof value === "string" ? value : key);
+                self.$table[section] = self.$fragments.sections[section];
                 self.$table.append(self.$table[section]);
             });
 
@@ -667,7 +667,7 @@
             // previous
             if (this.$elements.previous.length) {
                 this.$elements.previous.attr({
-                    src: this.paths.theme + "/prev.gif",
+                    src: this.paths.theme + "/images/prev.gif",
                     alt: "Previous Page",
                     title: "Previous Page"
                 }).click(function() {
@@ -678,7 +678,7 @@
             // next
             if (this.$elements.next.length) {
                 this.$elements.next.attr({
-                    src: this.paths.theme + "/next.gif",
+                    src: this.paths.theme + "/images/next.gif",
                     alt: "Next Page",
                     title: "Next Page"
                 }).click(function() {
@@ -1135,20 +1135,20 @@
             var self = this,
                 data = data || {};
 
+            // get count from data, or use number of body properties
+            this.count = data[this.keys.count] || $.getLength(data[this.keys.body]) ||  0;
+
+            // total pages = count / limit (or 1, if count or limit = 0)
+            this.total_pages = Math.ceil(this.count / this.data.filters.limit) || 1;
+
             // clear out the old data
             this.$table.children().empty();
 
             // build out new data
-            $.each(this.table.columns, function(key, column) {
-                self.columns = Math.max(self.columns, $.getLength(column));
-                self.build_section(key, self.$table[key], $.getObject(self.keys[key], data));
+            $.each(this.table, function(key, value) {
+                var section = (typeof value === "string" ? value : key);
+                self.build_section(self.table.section, self.$table[section], $.getObject(self.keys[section], data));
             });
-
-            // get count from data, or use number of body properties
-            this.count = data[this.keys.count] || $.getLength(this.table.columns[this.keys.body]) ||  0;
-
-            // total pages = count / limit (or 1, if count or limit = 0)
-            this.total_pages = Math.ceil(this.count / this.data.filters.limit) || 1;
 
             // add cell hovers
             this.$table.find(".tabulate-cell").hover(
@@ -1170,15 +1170,17 @@
         /**
          * Builds and appends a section of the table.
          * 
-         * @param String name The name of the section
+         * @param Object section The table section
          * @param jQuery $element The element to append rows to
          * @param Object data The data to populate the section with
          * 
          * @return Number The number of columns in the section.
          */
+        // TODO: fix this for limit/offset.  Currently it returns everything.
         build_section: function(section, $element, data) {
             var self = this,
-                data = data || {};
+                data = data || {},
+                has_properties = (typeof section === "object" ? true : false);
 
             if ($element && $element.length) {
                 // build rows
@@ -1195,11 +1197,17 @@
 
                         $cell.append($content);
 
-                        self.apply_properties($cell, {
-                            key: c,
-                            type: "column",
-                            dataset: data[r]
-                        }, $.getObject(c, self.table.columns[section]) || {});
+                        // apply column properties, if they exist
+                        if (has_properties && ("columns" in section)) {
+                            self.apply_properties($cell, {
+                                key: c,
+                                type: "column",
+                                dataset: data[r]
+                            }, $.getObject(c, section.columns) || {});
+                        }
+
+                        // otherwise, set cell content to the data for this row/column
+                        else $content.html(data[r][c]);
 
                         $row.append($cell);
 
@@ -1209,11 +1217,14 @@
 
                     // at least one column needs content to append row
                     if (!empty) {
-                        self.apply_properties($row, {
-                            key: r,
-                            type: "row",
-                            dataset: data
-                        }, $.getObject(r, self.table.rows[section]) || {});
+                        // apply row properties, if they exist
+                        if (has_properties && ("rows" in section)) {
+                            self.apply_properties($row, {
+                                key: r,
+                                type: "row",
+                                dataset: data
+                            }, $.getObject(r, section.rows) || {});
+                        }
 
                         $row.find(".tabulate-cell:first").addClass("tabulate-first");
                         $row.find(".tabulate-cell:last").addClass("tabulate-last");
@@ -1221,6 +1232,9 @@
                         $element.append($row);
                     }
                 });
+                
+                // update column count
+                this.columns = Math.max(this.columns, data.length);
             }
         },
 
