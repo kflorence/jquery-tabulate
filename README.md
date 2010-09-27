@@ -1,10 +1,8 @@
-#jQuery.tabulate
-
+# jQuery.tabulate
 __Author__ Kyle Florence <kyle.florence@gmail.com>  
 __Version__ 2.0.20100627
 
-##Change Log
-  
+## Change Log
 * __06/27/2010__ Version 2.0
     * FEATURES
         * Added demo page.
@@ -41,6 +39,10 @@ __Version__ 2.0.20100627
 * __06/11/2010__ Version 1.0
     * Initial release
 
-##Contact
-
+## Contact
 Found a bug?  Have a suggestion?  Please shoot me an email (see above).
+
+## License
+Copyright (c) 2010 Kyle Florence  
+Licensed under the GNU General Public License.  
+[http://www.gnu.org/licenses/gpl.html](http://www.gnu.org/licenses/gpl.html)
