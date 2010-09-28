@@ -296,7 +296,30 @@
                  * @default "src/themes/default"
                  * @type String
                  */
-                theme: "src/themes/default"
+                theme: "src/themes/default",
+                
+                /**
+                 * Contains the paths to images, relative to the current theme.
+                 * 
+                 * @namespace The paths to images needed by tabulate.
+                 */
+                images: {
+                    /**
+                     * The "previous" image.
+                     * 
+                     * @type String
+                     * @default "images/prev.png"
+                     */
+                    previous: "images/prev.png",
+                    
+                    /**
+                     * The "next" image.
+                     * 
+                     * @type String
+                     * @default "images/next.png"
+                     */
+                    next: "images/next.png"
+                }
             },
 
             /**
@@ -735,7 +758,7 @@
             // navigation: previous
             if (this.$elements.previous.length) {
                 this.$elements.previous.attr({
-                    src: this.paths.theme + "/images/prev.gif",
+                    src: [this.paths.theme, this.paths.images.previous].join("/"),
                     alt: "Previous Page",
                     title: "Previous Page"
                 }).click(function() {
@@ -746,7 +769,7 @@
             // navigation: next
             if (this.$elements.next.length) {
                 this.$elements.next.attr({
-                    src: this.paths.theme + "/images/next.gif",
+                    src: [this.paths.theme, this.paths.images.next].join("/"),
                     alt: "Next Page",
                     title: "Next Page"
                 }).click(function() {
