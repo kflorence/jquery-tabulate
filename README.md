@@ -1,8 +1,11 @@
 # jQuery.tabulate
 __Author__ Kyle Florence <kyle.florence@gmail.com>  
-__Version__ 2.0.20100627
+__Version__ 2.1.20100627
 
 ## Change Log
+* __09/27/2010__ Version 2.1
+    * TODO
+
 * __06/27/2010__ Version 2.0
     * FEATURES
         * Added demo page.
