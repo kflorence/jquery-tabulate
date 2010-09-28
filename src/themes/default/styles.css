@@ -5,10 +5,10 @@
  */
 
 /*------------------------------------------------------------------------------
-    Table
+    Container
 ------------------------------------------------------------------------------*/
 
-.tabulate-table {
+.tabulate-container {
     border-collapse: collapse;
     border-spacing: 0;
     table-layout: fixed;
@@ -16,7 +16,7 @@
 }
 
 /*------------------------------------------------------------------------------
-    Row
+    Rows
 ------------------------------------------------------------------------------*/
 
 .tabulate-row {
@@ -47,7 +47,7 @@
 }
 
 /*------------------------------------------------------------------------------
-    Cell
+    Cells
 ------------------------------------------------------------------------------*/
 
 .tabulate-cell {
@@ -159,7 +159,7 @@
     padding-right: 0; 
 }
 
-.tabulate-footer .tabulate-prev {
+.tabulate-navigation .tabulate-prev {
     padding-left: 0;
 }
 
@@ -195,6 +195,6 @@
     display: inline-block; /* IE 6 */
 }
 
-*:first-child html .clearfix {
+*:first-child+html .clearfix {
     display: inline-block; /* IE 7 */
 }
