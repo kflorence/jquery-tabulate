@@ -7,52 +7,10 @@
         
         <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
         <script type="text/javascript" src="src/jquery.tabulate.js"></script>
-        <link type="text/css" rel="stylesheet" href="src/themes/default/styles.min.css" />
+        <link type="text/css" rel="stylesheet" href="src/themes/default/styles.css" />
         <style type="text/css">a.api { color: #000; margin-top: 10px; }</style>
         
         <script type="text/javascript">
-        var dataset2 = {
-                head: [
-                    [
-                        "Heading 1",
-                        "Heading 2",
-                        "Heading 3"
-                    ]
-                ],
-                body: [
-                    [
-                        "row 1 col 1",
-                        "row 1 col 2",
-                        "row 1 col 3"
-                    ],
-                    [
-                        "row 2 col 1",
-                        "row 2 col 2",
-                        "row 2 col 3"
-                    ],
-                    [
-                        "row 3 col 1",
-                        "row 3 col 2",
-                        "row 3 col 3"
-                    ],
-                    [
-                        "row 4 col 1",
-                        "row 4 col 2",
-                        "row 4 col 3"
-                    ],
-                    [
-                        "row 5 col 1",
-                        "row 5 col 2",
-                        "row 5 col 3"
-                    ],
-                    [
-                        "row 6 col 1",
-                        "row 6 col 2",
-                        "row 6 col 3"
-                    ]
-                ]
-            };
-
         jQuery(function($) {
             $("#tabulate1").tabulate({
                 data: {
@@ -104,21 +62,7 @@
                     head: {
                         columns: {
 				            "col1": {
-				                content: "{col1}",
-				                styles: {
-				                    "font-weight": "bold"
-				                },
-				                attributes: {
-				                    id: "col1"
-				                },
-				                class_name: function($cell, $content, data) {
-				                    return data.replace(/\s+/g, '_');
-				                },
-				                events: {
-				                    "click": function(event, $cell, $content, data) {
-				                        console.log("click", event, $cell, $content, data);
-				                    }
-				                }
+				                content: "{col1}"
 				            },
 				            "col2": function($cell, $content, data) {
 				                return data;
@@ -146,6 +90,5 @@
     <body>
         <p><a href="doc/" class="api">Documentation</a></p>
         <div id="tabulate1"></div>
-        <div id="tabulate2"></div>
     </body>
 </html>
