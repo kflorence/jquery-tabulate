@@ -30,19 +30,13 @@
  */
 (function(a,c){var $=a.jQuery||a.Cowboy||(a.Cowboy={}),b;$.getObject=b=function(g,d,f){if(typeof g==="string"){g=g.split(".")}if(typeof d!=="boolean"){f=d;d=c}f=f||a;var e;while(f&&g.length){e=g.shift();if(f[e]===c&&d){f[e]={}}f=f[e]}return f};$.setObject=function(d,f,e){var h=d.split("."),i=h.pop(),g=b(h,true,e);return g&&typeof g==="object"&&i?(g[i]=f):c};$.exists=function(d,e){return b(d,e)!==c}})(this);
 
-/* jQuery getLength */
-(function($){$.getLength=function(a){if($.isArray(a)||typeof a==="string")return a.length;else if(typeof a==="object"){var len=0;$.each(a,function(){len++;});return len;}else return undefined;};})(jQuery);
-
-/* jQuery isNumber */
-(function($){$.isNumber=function(n){return !isNaN(parseFloat(n))&&isFinite(n);};})(jQuery);
-
-/* jQuery.isEmpty */
-(function($){$.isEmpty=function(o){if($.isArray(o)||typeof o==="string"){return(o.length?false:true);}else if(typeof o==="object"){var p;for(p in o){if(o.hasOwnProperty(p)){return false;}}return true;}else return(o?false:true);};})(jQuery);
+/* http://github.com/kflorence/misc-js/jquery */
+(function($){$.getLength=function(a){if($.isArray(a)||typeof a==="string")return a.length;else if(typeof a==="object"){var len=0;$.each(a,function(){len++;});return len;}else return undefined;};$.isNumber=function(n){return !isNaN(parseFloat(n))&&isFinite(n);};$.isEmpty=function(o){if($.isArray(o)||typeof o==="string"){return(o.length?false:true);}else if(typeof o==="object"){for(var p in o){if(o.hasOwnProperty(p)){return false;}}return true;}else return(o?false:true);};})(jQuery);
 
 /**
  * @fileOverview The jQuery.tabulate plugin.
  * @author <a href="mailto:kyle.florence@gmail.com">Kyle Florence</a>
- * @version 2.1.20100920
+ * @version 2.1.20100927
  */
 
 /**
@@ -122,12 +116,12 @@
      */
     $.tabulate = {
         /**
-         * The total number of rows in the dataset.
+         * The total number of rows in the data set.
          * 
          * <p>
          *   This value is usually based on the value of
          *   {@link jQuery.tabulate.options.keys.rows}, but in it's absence may also
-         *   be calculated by the number of rows found in the dataset.  It is
+         *   be calculated by the number of rows found in the data set.  It is
          *   set in {@link jQuery.tabulate.tabulate}.
          * </p>
          * 
@@ -137,7 +131,7 @@
         count: 0,
 
         /**
-         * The total number of "pages" in the dataset that are available for
+         * The total number of "pages" in the data set that are available for
          * viewing.
          * 
          * <p>
@@ -151,11 +145,11 @@
         total_pages: 1,
 
         /**
-         * The "page" of the dataset that is currently being viewed.
+         * The "page" of the data set that is currently being viewed.
          * 
          * <p>
          *   Used by the internal pagination system to limit the current view of
-         *   the dataset.  This variable is modified by the navigation functions.
+         *   the data set.  This variable is modified by the navigation functions.
          * </p>
          * 
          * @see jQuery.tabulate.previous
@@ -418,11 +412,80 @@
                 body: {
                     /**
                      * The key in our data set that stores content for the
-                     * "body" section.
+                     * "body" section. If a section contains no "key" property,
+                     * the section key will be used instead.
                      * 
                      * @default String "body"
                      */
                     key: "body",
+                    
+                    /**
+                     * Properties to assign to the rows in this section.
+                     * 
+                     * Valid row properties include any of the following:
+                     * 
+                     * <ul>
+                     *   <li>
+                     *     <strong>content</strong><br /><br />
+                     *     May be used to set the content of the cells within the
+                     *     row.  The content property accepts any of the following:
+                     *     a jQuery object, HTML, a String, a Number or a Function
+                     *     returning one of the previously stated types.  If a 
+                     *     function is given, three arguments will be passed in:
+                     *     $row (the current row, wrapped in a jQuery object),
+                     *     $content (the content areas of the cells within the row,
+                     *     wrapped in a jQuery object), and data (any data associated
+                     *     with the current row).
+                     *   </li>
+                     *   <li>
+                     *     <strong>filter</strong><br /><br />
+                     *     May be used to set additional properties on the row
+                     *     (including attributes, styles, events, etc).  This
+                     *     property only accepts a function.  Three arguments 
+                     *     will be available at runtime: $row (the current row,
+                     *     wrapped in a jQuery object), $content (the content area
+                     *     of that cell, wrapped in a jQuery object), and data
+                     *     (any data associated with the current cell).
+                     *   </li>
+                     * </ul>
+                     * 
+                     * @default Object {}
+                     */
+                    rows: {},
+                    
+                    /**
+                     * Properties to assign to the columns in this section.
+                     * 
+                     * Valid cell properties include any of the following:
+                     * 
+                     * <ul>
+                     *   <li>
+                     *     <strong>content</strong><br /><br />
+                     *     May be used to set the content of the cell.  The
+                     *     content property accepts any of the following: a
+                     *     jQuery object, HTML, a String, a Number or a Function
+                     *     returning one of the previously stated types.  If a 
+                     *     function is given, three arguments will be passed in:
+                     *     $cell (the current cell, wrapped in a jQuery object),
+                     *     $content (the content area of that cell, wrapped in a
+                     *     jQuery object), and data (any data associated with the
+                     *     current cell).
+                     *   </li>
+                     *   <li>
+                     *     <strong>filter</strong><br /><br />
+                     *     May be used to set additional properties on the cell
+                     *     (including attributes, styles, events, etc).  This
+                     *     property only accepts a function.  Three arguments 
+                     *     will be available at runtime: $cell (the current cell,
+                     *     wrapped in a jQuery object), $content (the content area
+                     *     of that cell, wrapped in a jQuery object), and data
+                     *     (any data associated with the current cell).
+                     *   </li>
+                     * </ul>
+                     * 
+                     * @default Object {}
+                     */
+                    cells: {},
 
                     /**
                      * Default "body" section element.
@@ -572,7 +635,7 @@
                  * 
                  * @type jQuery
                  */
-                table: $('<table class="tabulate-table"></table>'),
+                container: $('<table class="tabulate-container"></table>'),
 
                 /**
                  * Default navigation for the table.
@@ -645,13 +708,13 @@
             $.extend(this, {
                 $elements: this.elements,
                 $navigation: this.$fragments.navigation,
-                $table: this.$fragments.table,
+                $container: this.$fragments.container,
                 $wrapper: $wrapper
             });
 
             // store class instance in wrapper
             this.$wrapper.data("tabulate", this);
-            this.$wrapper.append(this.$table).append(this.$navigation);
+            this.$wrapper.append(this.$container).append(this.$navigation);
 
             // selector strings => jQuery objects
             $.each(this.$elements, function(key, selector) {
@@ -792,22 +855,9 @@
         },
 
         /**
-         * Updates the filters that will be applied to the current dataset.
+         * Updates the filters that will be applied to the current data set.
          * 
-         * <p>
-         *   This function will merge any filters that are passed in with those
-         *   already present, overwriting any values that are already contained
-         *   in the filters Object.  Any type of filter may be passed in here,
-         *   including custom filters that you wish to pass to your controller.
-         * </p>
-         * 
-         * <p>
-         *   When the merge is complete, the current_page will be reset to 1 and
-         *   the {@link jQuery.tabulate.event_handlers.event:refresh} event handler is
-         *   called which reloads the data with the new filters applied.
-         * </p>
-         * 
-         * @param Object filters The filters to apply to the dataset.
+         * @param Object filters The filters to apply to the data set.
          * @param Boolean overwrite Whether or not to overwrite the current filters
          *        with the new filters. Defaults to true.  If false, the two filter
          *        objects would be merged.
@@ -918,218 +968,6 @@
         },
 
         /**
-         * Applies properties to rows, columns and cells in the table.
-         * 
-         * <p>
-         *   Each row or column in the table may have any number of properties
-         *   assigned to it.  These properties are passed into the plugin upon
-         *   initialization as {@link jQuery.tabulate.options.rows} for rows, and
-         *   {@link jQuery.tabulate.options.columns} for columns.  The following
-         *   outlines valid properties for both rows and columns (note that
-         *   "cell" refers to a column within a row):
-         * </p>
-         * 
-         * <ul>
-         *   <li>
-         *     <strong>name</strong> - The name associated with the current cell
-         *     or row.  In the case of an object, this would be the key.  In the
-         *     case of an Array, this would be the index.
-         *   </li>
-         *   <li>
-         *     <strong>data</strong> - The data associated with the current row.
-         *     It can be used for extracting the value of a key and storing it
-         *     as the cell's content.
-         *   </li>
-         *   <li>
-         *     <strong>args</strong> - An array of arguments to pass to the
-         *     callback function via javaScript's apply function.
-         *   </li>
-         *   <li>
-         *     <p>
-         *       <strong>callback</strong> - This is a function that will be
-         *       called when the cell or row is instantiated.  This is useful
-         *       for manipulating something based on the data assigned to a cell
-         *       or row.  Inside of the this function, <em>this</em> is equal to
-         *       {@link jQuery.tabulate}.  The arguments passed to this function vary
-         *       between cells and rows.
-         *     </p>
-         *     
-         *     <p>The arguments passed for a row are:</p>
-         * 
-         *     <ul>
-         *       <li>
-         *         <strong>$row</strong> - The jQuery object representing the
-         *         current row.
-         *       </li>
-         *       <li>
-         *         <strong>row_data</strong> - The data associated with the current
-         *         row.
-         *       </li>
-         *     </ul>
-         * 
-         *     <p>The arguments passed for a cell are:</p>
-         * 
-         *     <ul>
-         *       <li>
-         *         <strong>$row</strong> - The jQuery object representing the
-         *         current row.
-         *       </li>
-         *       <li>
-         *         <strong>$cell</strong> - The jQuery object representing the
-         *         current cell.
-         *       </li>
-         *       <li>
-         *         <strong>$content</strong> - The jQuery object representing
-         *         $cell's content wrapper.
-         *       </li>
-         *       <li>
-         *         <strong>row_data</strong> - The data associated with the
-         *         current row.
-         *       </li>
-         *     </ul>
-         *   </li>
-         *   <li>
-         *     <strong>event_handlers</strong> - An object containing event
-         *     handlers to bind to the cell or row.  These should be defined in
-         *     the same format as {@link jQuery.tabulate.event_handlers}.
-         *   </li>
-         *   <li>
-         *     <strong>styles</strong> - An object containing style information
-         *     to be applied to the row or cell. This object is passed to the
-         *     <a href="http://api.jquery.com/jQuery.css/">jQuery.css</a>
-         *     function.
-         *   </li>
-         * </ul>
-         * 
-         * <p>
-         *   Columns may also contain these properties, in addition to those
-         *   defined above:
-         * </p>
-         * 
-         * <ul>
-         *   <li>
-         *     <strong>$content</strong> - The jQuery object in which to append
-         *     content inside of. If not given, defaults to $element.
-         *   </li>
-         *   <li>
-         *     <strong>content</strong> - The content to append inside $content.
-         *     Content can be passed in as a string, a jQuery object, or as a
-         *     key within the dataset <em>data</em>. If you wish to pass in a
-         *     key, you may do so within curly braces like so: "{some_key}".  If
-         *     the key is nested within the dataset, you may separate each level
-         *     by use of a dot like so: "{obj.prop.key}".
-         *   </li>
-         * </ul>
-         * 
-         * @see <a href="http://api.jquery.com/jQuery.css/">jQuery.css</a>
-         * @see <a href="https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/Function/apply">Function.apply</a>
-         * @see jQuery.tabulate.options.rows
-         * @see jQuery.tabulate.options.columns
-         * @see jQuery.tabulate.event_handlers
-         * 
-         * @param jQuery $element The element to apply the properties to.
-         * @param Object properties An object containing the properties.
-         * 
-         * @return jQuery The modified element
-         */
-        apply_properties: function($element, settings, properties) {
-            var self = this,
-                properties = properties || {},
-                dataset = settings.dataset || {},
-                key = (typeof settings.key != "undefined" ? settings.key : "");
-
-            $element.each(function(i, element) {
-                var $element = $(element),
-                    data = (dataset[key] ? dataset[key] : dataset),
-                    name = ($.isNumber(key) ? parseInt(key) + 1 : key),
-                    $content = $(".tabulate-content", $element),
-                    args = [$element, $content, data];
-
-                // content defaults to element if not present
-                if (!$content.length) $content = $element;
-
-                // apply type class
-                if (typeof settings.type == "string") {
-                    $element.addClass([self.name, settings.type, name].join("-"));
-                }
-
-                // set up properties according to type
-                switch(typeof properties) {
-                    case "string": {
-                        properties = { content: properties };
-                        break;
-                    }  
-                    case "function": {
-                        properties = { content: properties.apply(self, args) };
-                        break;
-                    }
-                }
-
-                // properties must be an object
-                if (typeof properties == "object") {
-                    $.each(properties, function(property, value) {
-                        switch(property) {
-                            case "attributes": {
-                                $element.attr(value);
-                                break;
-                            }
-                            case "content": {
-                                if (typeof value == "function") {
-                                    value = value.apply(self, args);
-                                }
-
-                                switch(typeof value) {
-                                    case "object": {
-                                        if (value instanceof $) {
-                                            $content.append(value);
-                                        }
-                                        break;
-                                    }
-                                    default: {
-                                        $content.append(value.replace(self.parse_key(), function(str, key) {
-                                            return $.getObject(key, dataset) || "";
-                                        }));
-                                        break;
-                                    }
-                                }
-                                break;
-                            }
-                            case "class_name": {
-                                switch (typeof value) {
-                                    case "function": {
-                                        $element.addClass(value.apply(self, args));
-                                        break;
-                                    }
-                                    default: {
-                                        $element.addClass(value);
-                                        break;
-                                    }
-                                }
-                                break;
-                            }
-                            case "events": {
-                                $.each(value, function(name, handler) {
-                                    $element.bind(name, function(event) {
-                                        handler.apply(self, [event].concat(args));
-                                    });
-                                });
-                                break;
-                            }
-                            case "filter": {
-                                value.apply(self, args);
-                                break;
-                            }
-                            case "styles": {
-                                $element.css(value);
-                                break;
-                            }
-                        }
-                    });
-                }
-            });
-        },
-
-        /**
          * Given data, builds a tabular view of that data.
          * 
          * <p>
@@ -1144,7 +982,7 @@
                 data = data || {};
 
             // get count from data, or use number of body properties
-            this.count = data[this.keys.count] || $.getLength(data[this.keys.body]) ||  0;
+            this.count = data[this.keys.count] || $.getLength(data[this.table.body.key]) || 0;
 
             // total pages = count / limit (or 1, if count or limit = 0)
             this.total_pages = Math.ceil(this.count / this.filters.limit) || 1;
@@ -1153,7 +991,7 @@
             this.current_page = Math.floor(this.filters.offset / this.filters.limit) + 1;
 
             // clear out the old data
-            this.$table.children().empty();
+            this.$container.children().empty();
 
             // build out new data
             $.each(this.table, function(section, options) {
@@ -1161,16 +999,16 @@
             });
 
             // add cell hovers
-            this.$table.find(".tabulate-cell").hover(
+            this.$container.find(".tabulate-cell").hover(
                 function() { $(this).addClass("tabulate-hover"); },
                 function() { $(this).removeClass("tabulate-hover") }
             );
 
             // add row classes
-            this.$table.body.find(".tabulate-row:odd").addClass("tabulate-odd");
-            this.$table.body.find(".tabulate-row:even").addClass("tabulate-even");
-            this.$table.body.find(".tabulate-row:first").addClass("tabulate-first");
-            this.$table.body.find(".tabulate-row:last").addClass("tabulate-last");
+            this.$container.body.find(".tabulate-row:odd").addClass("tabulate-odd");
+            this.$container.body.find(".tabulate-row:even").addClass("tabulate-even");
+            this.$container.body.find(".tabulate-row:first").addClass("tabulate-first");
+            this.$container.body.find(".tabulate-row:last").addClass("tabulate-last");
 
             // fire handlers
             this.trigger("loading", false);
@@ -1192,12 +1030,10 @@
                 return;
 
             var self = this,
-                data = $.getObject(options.key, data) || {},
-                has_row_properties = (options.rows ? true : false),
-                has_column_properties = (options.columns ? true : false);
+                data = $.getObject(options.key, data) || {};
 
             // append section to table
-            this.$table.append(this.$table[section] = options.$section);
+            this.$container.append(this.$container[section] = options.$section);
 
             // build rows
             $.each(data, function(r, row) {
@@ -1213,16 +1049,11 @@
 
                     $cell.append($content);
 
-                    if (has_column_properties) {
-                        self.apply_properties($cell, {
-                            key: c,
-                            type: "column",
-                            dataset: data[r]
-                        }, $.getObject(c, options.columns) || {});
-                    }
-
-                    // by default: set cell content to the data for this row/column
-                    else $content.html(data[r][c]);
+                    self.apply_properties($cell, {
+                        key: c,
+                        type: "column",
+                        dataset: data[r]
+                    }, $.getObject(c, options.cells));
 
                     $row.append($cell);
 
@@ -1232,23 +1063,80 @@
 
                 // at least one column needs content to append row
                 if (!empty) {
-                    if (has_row_properties) {
-                        self.apply_properties($row, {
-                            key: r,
-                            type: "row",
-                            dataset: data
-                        }, $.getObject(r, options.rows) || {});
-                    }
+                    self.apply_properties($row, {
+                        key: r,
+                        type: "row",
+                        dataset: data
+                    }, $.getObject(r, options.rows));
 
                     $row.find(".tabulate-cell:first").addClass("tabulate-first");
                     $row.find(".tabulate-cell:last").addClass("tabulate-last");
 
-                    self.$table[section].append($row);
+                    self.$container[section].append($row);
                 }
             });
 
             // update column count
             this.columns = Math.max(this.columns, data.length);
+        },
+
+        /**
+         * Applies properties to rows and cells in the table.
+         * 
+         * @see jQuery.table.body.rows
+         * @see jQuery.table.body.cells
+         * 
+         * @param jQuery $element The element to apply the properties to.
+         * @param Object settings An object containing settings for the
+         * 
+         * @return jQuery The modified element
+         */
+        apply_properties: function($element, settings, properties) {
+            var self = this,
+                dataset = settings.dataset || {},
+                key = (typeof settings.key !== "undefined" ? settings.key : "");
+
+            $element.each(function(i, element) {
+                var $element = $(element),
+                    $content = $(".tabulate-content", $element),
+                    data = (dataset[key] ? dataset[key] : dataset),
+                    name = ($.isNumber(key) ? parseInt(key) + 1 : key),
+                    args = ($content.length ? [$element, $content, data] : [$element, data]),
+                    props = (properties
+                        ? (typeof properties === "object" ? properties : { content: properties })
+                        : (typeof data === "object" ? {} : { content: data })
+                    );
+
+                // apply type class
+                if (typeof settings.type == "string") {
+                    $element.addClass([self.name, settings.type, name].join("-"));
+                }
+
+                $.each(props, function(property, value) {
+                    switch(property) {
+                        // jQuery Object, HTML, String or Function (returning one of those types) supported
+                        case "content": {
+                            if ($content.length) {
+                                if (value instanceof $) {
+                                    $content.append(value);
+                                } else {
+                                    $content.append((typeof value === "function" ? value.apply(self, args) : value)
+                                        .replace(self.parse_key(), function(str, key) {
+                                            return $.getObject(key, dataset) || "";
+                                        })
+                                    );
+                                }
+                            }
+                            break;
+                        }
+                        // Called with args: $element, $content, data
+                        case "filter": {
+                            value.apply(self, args);
+                            break;
+                        }
+                    }
+                });
+            });
         },
 
         /**
@@ -1352,7 +1240,7 @@
                 this.$elements.current_page.val(this.current_page);
 
                 if (this.count === 0) {
-                    this.$table.body.append(this.$fragments.row.clone()
+                    this.$container.body.append(this.$fragments.row.clone()
                         .addClass("tabulate-row-no-results")
                         .append(this.$fragments.cell.clone()
                             .attr("colSpan", this.columns)
