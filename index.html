@@ -3,8 +3,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
-        <title>jQuery Tabulate Plugin</title>       
-        
+        <title>jQuery Tabulate Plugin</title>
         <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
         <script type="text/javascript" src="src/jquery.tabulate.js"></script>
         <link type="text/css" rel="stylesheet" href="src/themes/default/styles.css" />
@@ -12,18 +11,18 @@
         
         <script type="text/javascript">
         jQuery(function($) {
-            $("#tabulate1").tabulate({
+            $("#tabulate").tabulate({
                 data: {
                     source: {
                         json: {
-                            head: [
+                            "head": [
                                 {
                                     "col1": "Heading 1",
                                     "col2": "Heading 2",
                                     "col3": "Heading 3"
                                 }
                             ],
-                            body: [
+                            "body": [
                                 {
                                     "col1": "row 1 col 1",
                                     "col2": "row 1 col 2",
@@ -89,6 +88,6 @@
     </head>
     <body>
         <p><a href="doc/" class="api">Documentation</a></p>
-        <div id="tabulate1"></div>
+        <div id="tabulate"></div>
     </body>
 </html>
