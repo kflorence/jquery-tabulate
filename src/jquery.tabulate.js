@@ -280,10 +280,10 @@
                  *   This is probably not desired and should be overwritten.
                  * </p>
                  * 
-                 * @default window.location.pathname
+                 * @default window.location.pathname.replace(/\/$/, '')
                  * @type String
                  */
-                tabulate: window.location.pathname,
+                tabulate: window.location.pathname.replace(/\/$/, ''),
 
                 /**
                  * The default path to the theme.
@@ -320,26 +320,6 @@
                      */
                     next: "images/next.png"
                 }
-            },
-
-            /**
-             * Keys help tabulate find relevant information in your data set.
-             * 
-             * @type Object
-             * @namespace Contains the names of keys in the data set.
-             */
-            keys: {
-                /**
-                 * The key that will store the total record count.
-                 * 
-                 * <p>
-                 *   If this key is omitted, the number of results in the
-                 *   data set will be used instead.
-                 * </p>
-                 * 
-                 * @default String "count"
-                 */
-                count: "count"
             },
 
             /**
@@ -427,21 +407,19 @@
              */
             table: {
                 /**
-                 * The "body" section.  Further options may be passed within
-                 * this object under the "rows" and "columns" properties.
+                 * The default "body" section.  Further options may be passed
+                 * within this object under the "rows" and "cells" properties.
+                 * 
+                 * <p>
+                 *   Note that if the section name differs from the section of
+                 *   your data set you wish to pull data from, you should provide
+                 *   a "key" property within this section that contains the name
+                 *   you wish to use.
+                 * </p>
                  * 
                  * @type Object
                  */
-                body: {
-                    /**
-                     * The key in our data set that stores content for the
-                     * "body" section. If a section contains no "key" property,
-                     * the section key will be used instead.
-                     * 
-                     * @default String "body"
-                     */
-                    key: "body",
-                    
+                body: {                    
                     /**
                      * Properties to assign to the rows in this section.
                      * 
@@ -519,6 +497,26 @@
                 }
             },
 
+            /**
+             * Keys help tabulate find relevant information in your data set.
+             * 
+             * @type Object
+             * @namespace Contains the names of keys in the data set.
+             */
+            keys: {
+                /**
+                 * The key that will store the total record count.
+                 * 
+                 * <p>
+                 *   This key can point to an integer value or an array (in which
+                 *   case the length of the array will be used).
+                 * </p>
+                 * 
+                 * @default String "body"
+                 */
+                count: "body"
+            },
+            
             /**
              * Contains the jQuery selectors for key elements.
              * 
@@ -743,11 +741,6 @@
             $.each(this.$elements, function(key, selector) {
                 self.$elements[key] = $(selector);
             });
-            
-            // remove trailing slash from paths
-            $.each(this.paths, function(key, path) {
-                self.paths[key] = path.replace(/\/$/, '');
-            });
 
             // generate full themes path
             this.paths.theme = [this.paths.tabulate, this.paths.theme].join("/");
@@ -851,7 +844,7 @@
         next: function(element) {
             if (this.current_page < this.total_pages) {
                 this.current_page++;
-                this.filters.offset = ((this.current_page - 1) * this.filters.limit);
+                this.filters.offset = ((this.current_page - 1) * this.filters.limit);                
                 this.trigger("refresh");
             }
         },
@@ -1005,7 +998,7 @@
                 data = data || {};
 
             // get count from data, or use number of body properties
-            this.count = data[this.keys.count] || $.getLength(data[this.table.body.key]) || 0;
+            this.count = parseInt(data[this.keys.count]) || $.getLength(data[this.keys.count]) || 0;
 
             // total pages = count / limit (or 1, if count or limit = 0)
             this.total_pages = Math.ceil(this.count / this.filters.limit) || 1;
@@ -1018,7 +1011,7 @@
 
             // build out new data
             $.each(this.table, function(section, options) {
-                self.build_section(section, options, data);
+                self.build_section(section, options, $.getObject(options.key || section, data) || []);
             });
 
             // add cell hovers
@@ -1046,14 +1039,13 @@
          *        and any additional properties to bestow upon the section.
          * @param Object data The data given to tabulate
          */
-        // TODO: fix this for limit/offset.  Currently it returns everything.
         build_section: function(section, options, data) {
-            // if no data or element are given, there is nothing to do
-            if (!options.key || !options.$section || !options.$section.length)
+            // if no element is given, there is nothing to do
+            if (!options.$section || !options.$section.length)
                 return;
 
             var self = this,
-                data = $.getObject(options.key, data) || {};
+                data = data.slice(this.filters.offset, this.filters.offset + this.filters.limit);
 
             // append section to table
             this.$container.append(this.$container[section] = options.$section);
@@ -1187,6 +1179,7 @@
              * @event
              */
             refresh: function(event, request, filters) {
+                // TODO: should only gather new data if needed, otherwise just tabulate
                 this.gather_data(request || this.data.source, filters || {});
             },
 
