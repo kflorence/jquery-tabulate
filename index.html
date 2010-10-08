@@ -14,61 +14,13 @@
             $("#tabulate").tabulate({
                 data: {
                     source: {
-                        json: {
-                            "head": [
-                                {
-                                    "col1": "Heading 1",
-                                    "col2": "Heading 2",
-                                    "col3": "Heading 3"
-                                }
-                            ],
-                            "body": [
-                                {
-                                    "col1": "row 1 col 1",
-                                    "col2": "row 1 col 2",
-                                    "col3": "row 1 col 3"
-                                },
-                                {
-                                    "col1": "row 2 col 1",
-                                    "col2": "row 2 col 2",
-                                    "col3": "row 2 col 3"
-                                },
-                                {
-                                    "col1": "row 3 col 1",
-                                    "col2": "row 3 col 2",
-                                    "col3": "row 3 col 3"
-                                },
-                                {
-                                    "col1": "row 4 col 1",
-                                    "col2": "row 4 col 2",
-                                    "col3": "row 4 col 3"
-                                },
-                                {
-                                    "col1": "row 5 col 1",
-                                    "col2": "row 5 col 2",
-                                    "col3": "row 5 col 3"
-                                },
-                                {
-                                    "col1": "row 6 col 1",
-                                    "col2": "row 6 col 2",
-                                    "col3": "row 6 col 3"
-                                }
-                            ]
+                        ajax: {
+                            url: "data.php",
+                            dataType: "json"
                         }
                     }
                 },
                 table: {
-                    head: {
-                        columns: {
-				            "col1": {
-				                content: "{col1}"
-				            },
-				            "col2": function($cell, $content, data) {
-				                return data;
-				            },
-				            "col3": "{col3}"
-                        }
-                    },
                     body: {
                         columns: {
 	                        "col1": {
