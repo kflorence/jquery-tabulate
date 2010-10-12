@@ -729,13 +729,12 @@
             $.extend(true, this.options, options || {});
             $.extend(true, this, this.options);
             $.extend(this, {
-                $navigation: this.fragments.$navigation,
-                $container: this.fragments.$container,
+                $navigation: this.fragments.$navigation.clone(),
+                $container: this.fragments.$container.clone(),
                 $wrapper: $wrapper
             });
             
-            // store class instance in wrapper
-            this.$wrapper.data("tabulate", this);
+            // build container
             this.$wrapper.append(this.$container).append(this.$navigation);
             
             // generate full themes path
@@ -746,7 +745,7 @@
             
             // Build out elements
             $.each(this.elements, function(key, value) {
-                self.elements[key] = $(value);
+                self.elements[key] = $(value, $wrapper);
             });
 
             // navigation: previous
@@ -916,9 +915,7 @@
          * @param Array args The Array of arguments to pass to the handler function.
          */
         trigger: function(name, args) {
-            args = args || [];
-
-            this.$wrapper.triggerHandler([name, this.name].join("."), ($.isArray(args) ? args : [args]));
+            this.$wrapper.triggerHandler([name, this.name].join("."), ($.isArray(args) ? args : (args ? [args] : [])));
         },
 
         /**
@@ -1059,7 +1056,7 @@
                 data = data.slice(this.filters.offset, this.filters.offset + this.filters.limit);
 
             // append section to table
-            this.$container.append(this.$container[section] = options.$section);
+            this.$container.append(this.$container[section] = options.$section.clone());
 
             // build rows
             $.each(data, function(r, row) {
