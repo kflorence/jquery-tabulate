@@ -1089,20 +1089,19 @@
                         dataset: data
                     }, $.getObject(r, options.rows));
 
-                    $row.find(".tabulate-cell:first").addClass("tabulate-first");
-                    $row.find(".tabulate-cell:last").addClass("tabulate-last");
-                    $row.find(".tabulate-cell:first").addClass("tabulate-first");
-                    $row.find(".tabulate-cell:last").addClass("tabulate-last");
+                    $row.children(":odd").addClass("tabulate-even");
+                    $row.children(":even").addClass("tabulate-odd");
+                    $row.children(":first").addClass("tabulate-first");
+                    $row.children(":last").addClass("tabulate-last");
 
                     $section.append($row);
                 }
             });
-            
-            // add classes
-            $section.find(".tabulate-row:odd").addClass("tabulate-even");
-            $section.find(".tabulate-row:even").addClass("tabulate-odd");
-            $section.find(".tabulate-row:first").addClass("tabulate-first");
-            $section.find(".tabulate-row:last").addClass("tabulate-last");
+
+            $section.children(":odd").addClass("tabulate-even");
+            $section.children(":even").addClass("tabulate-odd");
+            $section.children(":first").addClass("tabulate-first");
+            $section.children(":last").addClass("tabulate-last");
 
             // update column count
             this.columns = Math.max(this.columns, data.length);
