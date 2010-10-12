@@ -1018,23 +1018,15 @@
             // clear out the old data
             this.$container.children().empty();
 
-            // build out new data
-            $.each(this.table, function(section, options) {
-                self.build_section(section, options, $.getObject(options.key || section, data) || []);
-            });
-
-            // add cell hovers
-            this.$container.find(".tabulate-cell").hover(
-                function() { $(this).addClass("tabulate-hover"); },
-                function() { $(this).removeClass("tabulate-hover") }
-            );
-
-            // add row classes
-            this.$container.body.find(".tabulate-row:odd").addClass("tabulate-odd");
-            this.$container.body.find(".tabulate-row:even").addClass("tabulate-even");
-            this.$container.body.find(".tabulate-row:first").addClass("tabulate-first");
-            this.$container.body.find(".tabulate-row:last").addClass("tabulate-last");
-
+            // if total count is zero, we have nothing to tabulate
+            if (this.total_count === 0) {
+                this.trigger("no_results");
+            } else {
+                $.each(this.table, function(section, options) {
+                    self.build_section(section, options, $.getObject(options.key || section, data) || []);
+                });
+            }
+            
             // fire post_tabulate handler
             this.trigger("post_tabulate", data);
         },
@@ -1047,16 +1039,17 @@
          *        and any additional properties to bestow upon the section.
          * @param Object data The data given to tabulate
          */
-        build_section: function(section, options, data) {
+        build_section: function(name, options, data) {
             // if no element is given, there is nothing to do
             if (!options.$section || !options.$section.length)
                 return;
 
             var self = this,
+                $section = options.$section.clone(),
                 data = data.slice(this.filters.offset, this.filters.offset + this.filters.limit);
 
             // append section to table
-            this.$container.append(this.$container[section] = options.$section.clone());
+            this.$container.append($section);
 
             // build rows
             $.each(data, function(r, row) {
@@ -1065,7 +1058,7 @@
                     $row = self.fragments.$row.clone();
 
                 // build cells
-                $.each(row, function(c, column) {
+                $.each(row, function(c, cell) {
                     var c = c.toString(),
                         $cell = self.fragments.$cell.clone(),
                         $content = self.fragments.$content.clone();
@@ -1078,13 +1071,17 @@
                         dataset: data[r]
                     }, $.getObject(c, options.cells));
 
-                    $row.append($cell);
+                    // append to row, add hover classes (for IE)
+                    $row.append($cell.hover(
+                        function() { $(this).addClass("tabulate-hover"); },
+                        function() { $(this).removeClass("tabulate-hover"); }
+                    ));
 
                     // set render to true if we have cell content
                     if (empty && $content.html()) empty = false;
                 });
 
-                // at least one column needs content to append row
+                // at least one cell needs content to append row
                 if (!empty) {
                     self.apply_properties($row, {
                         key: r,
@@ -1094,10 +1091,18 @@
 
                     $row.find(".tabulate-cell:first").addClass("tabulate-first");
                     $row.find(".tabulate-cell:last").addClass("tabulate-last");
+                    $row.find(".tabulate-cell:first").addClass("tabulate-first");
+                    $row.find(".tabulate-cell:last").addClass("tabulate-last");
 
-                    self.$container[section].append($row);
+                    $section.append($row);
                 }
             });
+            
+            // add classes
+            $section.find(".tabulate-row:odd").addClass("tabulate-even");
+            $section.find(".tabulate-row:even").addClass("tabulate-odd");
+            $section.find(".tabulate-row:first").addClass("tabulate-first");
+            $section.find(".tabulate-row:last").addClass("tabulate-last");
 
             // update column count
             this.columns = Math.max(this.columns, data.length);
@@ -1249,7 +1254,7 @@
              * 
              * @event
              */
-            post_load: function(even, data) {
+            post_load: function(event, data) {
                 this.tabulate(data);
             },
 
@@ -1270,26 +1275,29 @@
                 this.elements.$count.text(this.total_count);
                 this.elements.$total_pages.text(this.total_pages);
                 this.elements.$current_page.val(this.current_page);
-
-                if (this.total_count === 0) {
-                    this.$container.body.append(this.fragments.$row.clone()
-                        .addClass("tabulate-row-no-results")
-                        .append(this.fragments.$cell.clone()
-                            .attr("colSpan", this.columns)
-                            .append(this.fragments.$content.clone()
-                                .text("No results found")
-                            )
-                        )
-                    );
-                }
+            },
+            
+            /**
+             * Called if there was no data to tabulate upon.
+             * 
+             * @param Object event The jQuery Event object.
+             * 
+             * @event
+             */
+            no_results: function(event) {
+                this.$navigation.before(this.fragments.$content.clone()
+                    .addClass("tabulate-no-results").text("No results found")
+                );
             },
             
             /**
              * Resets tabulate back to it's default state.
              * 
+             * @param Object event The jQuery Event Object
+             * 
              * @event
              */
-            reset: function() {
+            reset: function(event) {
                 this.cache = {};
                 this.total_count = this.current_count = 0;
                 this.go_to(1);
