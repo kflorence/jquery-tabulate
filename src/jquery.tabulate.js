@@ -1156,7 +1156,6 @@
                             }
                             break;
                         }
-                        // Called with args: $element, $content, data
                         case "filter": {
                             value.apply(self, args);
                             break;
@@ -1193,7 +1192,6 @@
              * @event
              */
             refresh: function(event, request, filters) {
-                // Only load new data if needed
                 if ((this.current_count === 0)
                     || (this.filters.offset + this.filters.limit > this.current_count)
                     && (this.current_count < this.total_count)) {
