@@ -402,100 +402,107 @@
             },
 
             /**
-             * The different sections of the table.
+             * Contains the sections of the table and their settings.  By default,
+             * the sections "head", "body" and "foot" have been defined for you.
+             * You may use these sections for your table, overwrite them, or
+             * define your own.
+             * 
+             * Valid settings include:
+             * 
+             * <ul>
+             *   <li>
+             *     <strong>container</strong><br /><br />
+             *     The container for this section.  Can be a string containing
+             *     HTML or a jQuery object.
+             *   </li>
+             *   <li>
+             *     <strong>key</strong><br /><br />
+             *     The key in your data set to bind to this section.  This should
+             *     point to the data you want to build the section out with.  By
+             *     default, the name of the section will be used as the key.
+             *   </li>
+             *     <strong>rows</strong><br /><br />
+             *     Properties to assign to the rows in this section.
+             * 
+             *     Valid row properties include any of the following:
+             * 
+             *     <ul>
+             *       <li>
+             *         <strong>content</strong><br /><br />
+             *         May be used to set the content of the cells within the
+             *         row.  The content property accepts any of the following:
+             *         a jQuery object, HTML, a String, a Number or a Function
+             *         returning one of the previously stated types.  If a 
+             *         function is given, three arguments will be passed in:
+             *         $row (the current row, wrapped in a jQuery object),
+             *         $content (the content areas of the cells within the row,
+             *         wrapped in a jQuery object), and data (any data associated
+             *         with the current row).
+             *       </li>
+             *       <li>
+             *         <strong>filter</strong><br /><br />
+             *         May be used to set additional properties on the row
+             *         (including attributes, styles, events, etc).  This
+             *         property only accepts a function.  Three arguments 
+             *         will be available at runtime: $row (the current row,
+             *         wrapped in a jQuery object), $content (the content areas
+             *         of the cells within the row, wrapped in a jQuery object),
+             *         and data (any data associated with the current row).
+             *       </li>
+             *     </ul>
+             *   <li>
+             *   </li>
+             *   <li>
+             *     <strong>cells</strong><br /><br />
+             *     
+             *     Properties to assign to the columns in this section.
+             * 
+             *     Valid cell properties include any of the following:
+             * 
+             *     <ul>
+             *       <li>
+             *         <strong>content</strong><br /><br />
+             *         May be used to set the content of the cell.  The
+             *         content property accepts any of the following: a
+             *         jQuery object, HTML, a String, a Number or a Function
+             *         returning one of the previously stated types.  If a 
+             *         function is given, three arguments will be passed in:
+             *         $cell (the current cell, wrapped in a jQuery object),
+             *         $content (the content area of that cell, wrapped in a
+             *         jQuery object), and data (any data associated with the
+             *         current cell).
+             *       </li>
+             *       <li>
+             *         <strong>filter</strong><br /><br />
+             *         May be used to set additional properties on the cell
+             *         (including attributes, styles, events, etc).  This
+             *         property only accepts a function.  Three arguments 
+             *         will be available at runtime: $cell (the current cell,
+             *         wrapped in a jQuery object), $content (the content area
+             *         of that cell, wrapped in a jQuery object), and data
+             *         (any data associated with the current cell).
+             *       </li>
+             *     </ul>
+             *   </li>
+             * </ul>
+             * 
+             * <p>
+             *   Note that even if a section is defined, it will only be shown
+             *   if it has data associated with it.
+             * </p>
              * 
              * @type Object
-             * @namespace Contains the name of table sections and their applicable options
+             * @namespace
              */
             table: {
-                /**
-                 * The default "body" section.  Further options may be passed
-                 * within this object under the "rows" and "cells" properties.
-                 * 
-                 * <p>
-                 *   Note that if the section name differs from the section of
-                 *   your data set you wish to pull data from, you should provide
-                 *   a "key" property within this section that contains the name
-                 *   you wish to use.
-                 * </p>
-                 * 
-                 * @type Object
-                 */
-                body: {                    
-                    /**
-                     * Properties to assign to the rows in this section.
-                     * 
-                     * Valid row properties include any of the following:
-                     * 
-                     * <ul>
-                     *   <li>
-                     *     <strong>content</strong><br /><br />
-                     *     May be used to set the content of the cells within the
-                     *     row.  The content property accepts any of the following:
-                     *     a jQuery object, HTML, a String, a Number or a Function
-                     *     returning one of the previously stated types.  If a 
-                     *     function is given, three arguments will be passed in:
-                     *     $row (the current row, wrapped in a jQuery object),
-                     *     $content (the content areas of the cells within the row,
-                     *     wrapped in a jQuery object), and data (any data associated
-                     *     with the current row).
-                     *   </li>
-                     *   <li>
-                     *     <strong>filter</strong><br /><br />
-                     *     May be used to set additional properties on the row
-                     *     (including attributes, styles, events, etc).  This
-                     *     property only accepts a function.  Three arguments 
-                     *     will be available at runtime: $row (the current row,
-                     *     wrapped in a jQuery object), $content (the content area
-                     *     of that cell, wrapped in a jQuery object), and data
-                     *     (any data associated with the current cell).
-                     *   </li>
-                     * </ul>
-                     * 
-                     * @default Object {}
-                     */
-                    rows: {},
-                    
-                    /**
-                     * Properties to assign to the columns in this section.
-                     * 
-                     * Valid cell properties include any of the following:
-                     * 
-                     * <ul>
-                     *   <li>
-                     *     <strong>content</strong><br /><br />
-                     *     May be used to set the content of the cell.  The
-                     *     content property accepts any of the following: a
-                     *     jQuery object, HTML, a String, a Number or a Function
-                     *     returning one of the previously stated types.  If a 
-                     *     function is given, three arguments will be passed in:
-                     *     $cell (the current cell, wrapped in a jQuery object),
-                     *     $content (the content area of that cell, wrapped in a
-                     *     jQuery object), and data (any data associated with the
-                     *     current cell).
-                     *   </li>
-                     *   <li>
-                     *     <strong>filter</strong><br /><br />
-                     *     May be used to set additional properties on the cell
-                     *     (including attributes, styles, events, etc).  This
-                     *     property only accepts a function.  Three arguments 
-                     *     will be available at runtime: $cell (the current cell,
-                     *     wrapped in a jQuery object), $content (the content area
-                     *     of that cell, wrapped in a jQuery object), and data
-                     *     (any data associated with the current cell).
-                     *   </li>
-                     * </ul>
-                     * 
-                     * @default Object {}
-                     */
-                    cells: {},
-
-                    /**
-                     * Default "body" section element.
-                     * 
-                     * @type jQuery
-                     */
-                    $section: $('<tbody class="tabulate-body"></tbody>')
+                head: {
+                    container: $('<thead class="tabulate-header"></thead>')
+                },
+                body: {
+                    container: $('<tbody class="tabulate-body"></tbody>')
+                },
+                foot: {
+                    container: $('<tfoot class="tabulate-footer"></tfoot>')
                 }
             },
 
@@ -523,7 +530,7 @@
                  *   case the length of the array will be used).
                  * </p>
                  * 
-                 * @default String "body"
+                 * @default String "count"
                  */
                 count: "count"
             },
@@ -1040,12 +1047,12 @@
          * @param Object data The data given to tabulate
          */
         build_section: function(name, options, data) {
-            // if no element is given, there is nothing to do
-            if (!options.$section || !options.$section.length)
+            // if no containing element is given, there is nothing to do
+            if (!options.container || !options.container.length)
                 return;
 
             var self = this,
-                $section = options.$section.clone(),
+                $section = options.container.clone(),
                 data = data.slice(this.filters.offset, this.filters.offset + this.filters.limit);
 
             // append section to table
