@@ -492,7 +492,7 @@
              * </p>
              * 
              * @type Object
-             * @namespace
+             * @namespace Contains the sections of the table and their settings.
              */
             table: {
                 head: {
