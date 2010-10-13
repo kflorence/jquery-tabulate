@@ -1,80 +1,63 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <head>
+        <title>jQuery Tabulate Plugin</title>
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
+        <script type="text/javascript" src="src/jquery.tabulate.js"></script>
+        <link type="text/css" rel="stylesheet" href="src/themes/default/styles.css" />
+        <style type="text/css">a.api { color: #000; margin-top: 10px; }</style>
+        
+        <script type="text/javascript">
+        jQuery(function($) {
+            $("#tabulate-ajax").tabulate({
+                data: {
+                    source: {
+                        ajax: {
+                            url: "data.php",
+                            dataType: "json"
+                        }
+                    }
+                }
+            });
 
-	<title>kflorence/jquery-tabulate @ GitHub</title>
-	
-	<style type="text/css">
-		body {
-  		margin-top: 1.0em;
-  		background-color: #66f2b3;
-		  font-family: "Helvetica,Arial,FreeSans";
-  		color: #000000;
-    }
-    #container {
-      margin: 0 auto;
-      width: 700px;
-    }
-		h1 { font-size: 3.8em; color: #990d4c; margin-bottom: 3px; }
-		h1 .small { font-size: 0.4em; }
-		h1 a { text-decoration: none }
-		h2 { font-size: 1.5em; color: #990d4c; }
-    h3 { text-align: center; color: #990d4c; }
-    a { color: #990d4c; }
-    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-    .download { float: right; }
-		pre { background: #000; color: #fff; padding: 15px;}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { text-align:center; padding-top:30px; font-style: italic; }
-	</style>
-	
-</head>
+            $("#tabulate-json").tabulate({
+                data: {
+                    source: {
+                        json: {
+							"head": [
+								["heading 1", "heading 2", "heading 3"]
+							],
+            				"body": [
+            				    ["column 1", "column 2", "column 3"],
+            				    ["column 1", "column 2", "column 3"]
+            				]
+    					}
+                    }
+                },
+                table: {
+                	body: {
+						rows: {
+							0: {
+								filter: function($row, $content, data) {
+									$row.css("background-color", "#EEEEEE");
+	                			}
+                			}
+                		}
+                    }
+                }
+            });
+        });
+        </script>
+    </head>
+    <body>
+    	<h1>jQuery.tabulate</h1>
+        <p><a href="doc/" class="api">Documentation</a></p>
 
-<body>
-  <a href="http://github.com/kflorence/jquery-tabulate"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+        <h2>Tabulate via AJAX request</h2>
+        <div id="tabulate-ajax"></div>
 
-  <div id="container">
-
-    <div class="download">
-      <a href="http://github.com/kflorence/jquery-tabulate/zipball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
-      <a href="http://github.com/kflorence/jquery-tabulate/tarball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
-    </div>
-
-    <h1><a href="http://github.com/kflorence/jquery-tabulate">jquery-tabulate</a>
-      <span class="small">by <a href="http://github.com/kflorence">kflorence</a></span></h1>
-
-    <div class="description">
-      Builds a table from arbitrary JSON data.
-    </div>
-
-    <h2>Authors</h2>
-<p>Kyle Florence (kyle.florence@gmail.com)<br/><br/>      </p>
-<h2>Contact</h2>
-<p>Kyle Florence (kyle.florence@gmail.com)<br/>      </p>
-
-
-    <h2>Download</h2>
-    <p>
-      You can download this project in either
-      <a href="http://github.com/kflorence/jquery-tabulate/zipball/master">zip</a> or
-      <a href="http://github.com/kflorence/jquery-tabulate/tarball/master">tar</a> formats.
-    </p>
-    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-      by running:
-      <pre>$ git clone git://github.com/kflorence/jquery-tabulate</pre>
-    </p>
-
-    <div class="footer">
-      get the source code on GitHub : <a href="http://github.com/kflorence/jquery-tabulate">kflorence/jquery-tabulate</a>
-    </div>
-
-  </div>
-
-  
-</body>
+        <h2>Tabulate via static JSON</h2>
+        <div id="tabulate-json"></div>
+    </body>
 </html>
