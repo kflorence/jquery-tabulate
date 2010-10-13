@@ -421,6 +421,7 @@
              *     point to the data you want to build the section out with.  By
              *     default, the name of the section will be used as the key.
              *   </li>
+             *   </li>
              *     <strong>rows</strong><br /><br />
              *     Properties to assign to the rows in this section.
              * 
@@ -450,7 +451,6 @@
              *         and data (any data associated with the current row).
              *       </li>
              *     </ul>
-             *   <li>
              *   </li>
              *   <li>
              *     <strong>cells</strong><br /><br />
