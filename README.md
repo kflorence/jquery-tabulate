@@ -3,7 +3,7 @@ __Author__ Kyle Florence <kyle.florence@gmail.com>
 __Version__ 2.3.20101013
 
 ## Change Log
-Version 2.3 (10/13/2010)
+__Version 2.3__ (10/13/2010)
 
 * Fix multiple instance bugs
 * Clean up tabulate method
@@ -13,7 +13,7 @@ Version 2.3 (10/13/2010)
 * Updated jsdocs
 * Updated this README
 
-Version 2.2 (10/08/2010)
+__Version 2.2__ (10/08/2010)
 
 * Updated demo and examples
 * Added new images to default theme
@@ -22,12 +22,12 @@ Version 2.2 (10/08/2010)
 * Fixed bugs relating to table options and their data
 * Added AJAX load example, including a PHP JSON feed file	
 
-Version 2.1 (09/27/2010)
+__Version 2.1__ (09/27/2010)
 
 * Cleanup and reorganization.
 * Refined dependencies
 
-Version 2.0 (06/27/2010)
+__Version 2.0__ (06/27/2010)
 
 * Added demo page.
 * Added "default" theme style and images.
@@ -42,7 +42,8 @@ Version 2.0 (06/27/2010)
   "load" function to "gather_data" as it makes more sense, logically.
 * Semantic changes, mainly for readability and namespacing.
 
-Version 1.2 (06/22/2010) 
+__Version 1.2__ (06/22/2010)
+
 * Fixed passing in rows and columns as objects (previously resulted in
   an empty dataset as the object would be pushed to an array).
 * Fixed rows and columns event handlers not being called because of
@@ -56,8 +57,9 @@ Version 1.2 (06/22/2010)
   to apply filters to a single request only (does not store these filters
   in class).
   
-Version 1.0 (06/11/2010) 
-    * Initial release
+__Version 1.0__ (06/11/2010)
+
+* Initial release
 
 ## Contact
 Found a bug?  Have a suggestion?  Please shoot me an email (see above).
