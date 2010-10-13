@@ -201,11 +201,9 @@ ul.inheritsList
 	
 	<li><a href="../symbols/jQuery.tabulate.event_handlers.html">jQuery.tabulate.event_handlers</a></li>
 	
+	<li><a href="../symbols/jQuery.tabulate.filters.html">jQuery.tabulate.filters</a></li>
+	
 	<li><a href="../symbols/jQuery.tabulate.options.html">jQuery.tabulate.options</a></li>
-	
-	<li><a href="../symbols/jQuery.tabulate.options.%24elements.html">jQuery.tabulate.options.$elements</a></li>
-	
-	<li><a href="../symbols/jQuery.tabulate.options.%24fragments.html">jQuery.tabulate.options.$fragments</a></li>
 	
 	<li><a href="../symbols/jQuery.tabulate.options.data.html">jQuery.tabulate.options.data</a></li>
 	
@@ -213,9 +211,15 @@ ul.inheritsList
 	
 	<li><a href="../symbols/jQuery.tabulate.options.data.source.html">jQuery.tabulate.options.data.source</a></li>
 	
+	<li><a href="../symbols/jQuery.tabulate.options.elements.html">jQuery.tabulate.options.elements</a></li>
+	
+	<li><a href="../symbols/jQuery.tabulate.options.fragments.html">jQuery.tabulate.options.fragments</a></li>
+	
 	<li><a href="../symbols/jQuery.tabulate.options.keys.html">jQuery.tabulate.options.keys</a></li>
 	
 	<li><a href="../symbols/jQuery.tabulate.options.paths.html">jQuery.tabulate.options.paths</a></li>
+	
+	<li><a href="../symbols/jQuery.tabulate.options.paths.images.html">jQuery.tabulate.options.paths.images</a></li>
 	
 	<li><a href="../symbols/jQuery.tabulate.options.table.html">jQuery.tabulate.options.table</a></li>
 	
@@ -262,7 +266,7 @@ ul.inheritsList
 							<div class="fixedFont">
 								<b><a href="../symbols/jQuery.tabulate.options.data.source.html#constructor">jQuery.tabulate.options.data.source</a></b>
 							</div>
-							<div class="description"></div>
+							<div class="description">Contains data sources to work upon.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -270,44 +274,6 @@ ul.inheritsList
 			
 
 <!-- ============================== properties summary ===================== -->
-			
-				
-				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class jQuery.tabulate.options.data.source.">
-					<caption>Field Summary</caption>
-					<thead>
-						<tr>
-							<th scope="col">Field Attributes</th>
-							<th scope="col">Field Name and Description</th>
-						</tr>
-					</thead>
-					<tbody>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								jQuery.tabulate.options.data.source.<b><a href="../symbols/jQuery.tabulate.options.data.source.html#.ajax">ajax</a></b>
-								</div>
-								<div class="description">The settings for an AJAX request.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								jQuery.tabulate.options.data.source.<b><a href="../symbols/jQuery.tabulate.options.data.source.html#.json">json</a></b>
-								</div>
-								<div class="description">JSON data.</div>
-							</td>
-						</tr>
-					
-					</tbody>
-				</table>
-				
-				
-				
 			
 
 <!-- ============================== methods summary ======================== -->
@@ -327,7 +293,52 @@ ul.inheritsList
 				</div>
 				
 				<div class="description">
-					
+					Contains data sources to work upon.
+
+<p>
+  Data sources are defined as a key/value pair within the
+  source object.  The following are valid data sources:
+</p>
+
+<ul>
+  <li>
+    <strong>json</strong> - Pure JSON data. Example: <br />
+    <code>
+        {
+            count: 1234,
+            some_other_data: "data",
+            more_custom_data: "not needed by tabulate",
+            rows: [
+                {
+                    "col1": "row 1 column 1 data",
+                    "col2": "row 1 column 2 data",
+                    "col3": "row 1 column 3 data"
+                }
+                ...
+                {
+                    "col1": "row 50 column 1 data",
+                    "col2": "row 50 column 2 data",
+                    "col3": "row 50 column 3 data"
+                }
+            ]
+        }
+    </code>
+  </li>
+  <li>
+    <strong>ajax</strong> - A  <a href="http://api.jquery.com/jQuery.ajax/">jQuery.ajax</a> request object.<br /><br />
+    These settings that will be passed into the native jQuery.ajax function.
+    Any of the options available to that function may be used
+    here, with the exception of the "success" and "error"
+    functions, which are overridden internally. Example: <br />
+    <code>
+        {
+            url: "/path/to/controller",
+            data: { method: "some_method" },
+            dataType: "json"
+        }
+    </code>
+  </li>
+</ul>
 					
 				</div>
 				
@@ -347,116 +358,6 @@ ul.inheritsList
 
 <!-- ============================== field details ========================== -->		
 			
-				<div class="sectionTitle">
-					Field Detail
-				</div>
-				
-					<a name=".ajax"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{Object}</span>
-					<span class="light">jQuery.tabulate.options.data.source.</span><b>ajax</b>
-					
-					</div>
-					<div class="description">
-						The settings for an AJAX request.
-
-<p>
-  These settings that will be passed into <a href="http://api.jquery.com/jQuery.ajax/">jQuery.ajax</a>.
-  Any of the options available to that function may be used
-  here, with the exception of the "success" and "error"
-  functions, which are overridden internally.
-</p>
-
-<code>
-{
-    ajax: {
-        url: "/path/to/controller",
-        data: { method: "some_method" },
-        dataType: "json"
-    }
-}
-</code>
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">See:</dt>
-							
-							<dd><a href="http://api.jquery.com/jQuery.ajax/">jQuery.ajax</a></dd>
-							
-							</dl>
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Default Value:</dt>
-							<dd>
-								undefined
-							</dd>
-							</dl>
-						
-
-					<hr />
-				
-					<a name=".json"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{Object}</span>
-					<span class="light">jQuery.tabulate.options.data.source.</span><b>json</b>
-					
-					</div>
-					<div class="description">
-						JSON data.
-
-<code>
-{
-    json: {
-        count: 1234,
-        some_other_data: "data",
-        more_custom_data: "not needed by tabulate",
-        rows: {
-            "row1": {...},
-            "row2": {...},
-            ...
-            "row1234": {...}
-        }
-    }
-}
-</code>
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">See:</dt>
-							
-							<dd><a href="http://jsonlint.com/">JSONLint</a></dd>
-							
-							</dl>
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Default Value:</dt>
-							<dd>
-								undefined
-							</dd>
-							</dl>
-						
-
-					
-				
-			
 
 <!-- ============================== method details ========================= -->		
 			
@@ -471,7 +372,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Thu Sep 16 2010 17:15:10 GMT-0700 (PDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Tue Oct 12 2010 18:14:07 GMT-0700 (PDT)
 		</div>
 	</body>
 </html>

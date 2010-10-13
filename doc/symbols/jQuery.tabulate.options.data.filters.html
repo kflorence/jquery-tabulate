@@ -201,11 +201,9 @@ ul.inheritsList
 	
 	<li><a href="../symbols/jQuery.tabulate.event_handlers.html">jQuery.tabulate.event_handlers</a></li>
 	
+	<li><a href="../symbols/jQuery.tabulate.filters.html">jQuery.tabulate.filters</a></li>
+	
 	<li><a href="../symbols/jQuery.tabulate.options.html">jQuery.tabulate.options</a></li>
-	
-	<li><a href="../symbols/jQuery.tabulate.options.%24elements.html">jQuery.tabulate.options.$elements</a></li>
-	
-	<li><a href="../symbols/jQuery.tabulate.options.%24fragments.html">jQuery.tabulate.options.$fragments</a></li>
 	
 	<li><a href="../symbols/jQuery.tabulate.options.data.html">jQuery.tabulate.options.data</a></li>
 	
@@ -213,9 +211,15 @@ ul.inheritsList
 	
 	<li><a href="../symbols/jQuery.tabulate.options.data.source.html">jQuery.tabulate.options.data.source</a></li>
 	
+	<li><a href="../symbols/jQuery.tabulate.options.elements.html">jQuery.tabulate.options.elements</a></li>
+	
+	<li><a href="../symbols/jQuery.tabulate.options.fragments.html">jQuery.tabulate.options.fragments</a></li>
+	
 	<li><a href="../symbols/jQuery.tabulate.options.keys.html">jQuery.tabulate.options.keys</a></li>
 	
 	<li><a href="../symbols/jQuery.tabulate.options.paths.html">jQuery.tabulate.options.paths</a></li>
+	
+	<li><a href="../symbols/jQuery.tabulate.options.paths.images.html">jQuery.tabulate.options.paths.images</a></li>
 	
 	<li><a href="../symbols/jQuery.tabulate.options.table.html">jQuery.tabulate.options.table</a></li>
 	
@@ -238,7 +242,7 @@ ul.inheritsList
 				
 				
 			
-				Contains the filters to apply to the data set.
+				Contains filters to apply to the data set.
 				
 				
 					<br /><i>Defined in: </i> <a href="../symbols/src/_home_kflorence_sandbox_jquery-tabulate_src_jquery.tabulate.js.html">jquery.tabulate.js</a>.
@@ -262,7 +266,7 @@ ul.inheritsList
 							<div class="fixedFont">
 								<b><a href="../symbols/jQuery.tabulate.options.data.filters.html#constructor">jQuery.tabulate.options.data.filters</a></b>
 							</div>
-							<div class="description"></div>
+							<div class="description">These filters will be attached to the data set.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -270,44 +274,6 @@ ul.inheritsList
 			
 
 <!-- ============================== properties summary ===================== -->
-			
-				
-				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class jQuery.tabulate.options.data.filters.">
-					<caption>Field Summary</caption>
-					<thead>
-						<tr>
-							<th scope="col">Field Attributes</th>
-							<th scope="col">Field Name and Description</th>
-						</tr>
-					</thead>
-					<tbody>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								jQuery.tabulate.options.data.filters.<b><a href="../symbols/jQuery.tabulate.options.data.filters.html#.limit">limit</a></b>
-								</div>
-								<div class="description">How many items to show per page.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								jQuery.tabulate.options.data.filters.<b><a href="../symbols/jQuery.tabulate.options.data.filters.html#.offset">offset</a></b>
-								</div>
-								<div class="description">The number of items by which to offest our data set.</div>
-							</td>
-						</tr>
-					
-					</tbody>
-				</table>
-				
-				
-				
 			
 
 <!-- ============================== methods summary ======================== -->
@@ -327,7 +293,10 @@ ul.inheritsList
 				</div>
 				
 				<div class="description">
-					
+					These filters will be attached to the data set.  They may
+override any global filter values, but the global filters
+will always be present (whether or not their values are
+overwritten).
 					
 				</div>
 				
@@ -347,69 +316,6 @@ ul.inheritsList
 
 <!-- ============================== field details ========================== -->		
 			
-				<div class="sectionTitle">
-					Field Detail
-				</div>
-				
-					<a name=".limit"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{integer}</span>
-					<span class="light">jQuery.tabulate.options.data.filters.</span><b>limit</b>
-					
-					</div>
-					<div class="description">
-						How many items to show per page.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Default Value:</dt>
-							<dd>
-								0
-							</dd>
-							</dl>
-						
-
-					<hr />
-				
-					<a name=".offset"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{integer}</span>
-					<span class="light">jQuery.tabulate.options.data.filters.</span><b>offset</b>
-					
-					</div>
-					<div class="description">
-						The number of items by which to offest our data set.
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Default Value:</dt>
-							<dd>
-								0
-							</dd>
-							</dl>
-						
-
-					
-				
-			
 
 <!-- ============================== method details ========================= -->		
 			
@@ -424,7 +330,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Thu Sep 16 2010 17:15:10 GMT-0700 (PDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Tue Oct 12 2010 18:14:07 GMT-0700 (PDT)
 		</div>
 	</body>
 </html>

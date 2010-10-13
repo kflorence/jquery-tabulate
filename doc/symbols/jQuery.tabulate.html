@@ -201,11 +201,9 @@ ul.inheritsList
 	
 	<li><a href="../symbols/jQuery.tabulate.event_handlers.html">jQuery.tabulate.event_handlers</a></li>
 	
+	<li><a href="../symbols/jQuery.tabulate.filters.html">jQuery.tabulate.filters</a></li>
+	
 	<li><a href="../symbols/jQuery.tabulate.options.html">jQuery.tabulate.options</a></li>
-	
-	<li><a href="../symbols/jQuery.tabulate.options.%24elements.html">jQuery.tabulate.options.$elements</a></li>
-	
-	<li><a href="../symbols/jQuery.tabulate.options.%24fragments.html">jQuery.tabulate.options.$fragments</a></li>
 	
 	<li><a href="../symbols/jQuery.tabulate.options.data.html">jQuery.tabulate.options.data</a></li>
 	
@@ -213,9 +211,15 @@ ul.inheritsList
 	
 	<li><a href="../symbols/jQuery.tabulate.options.data.source.html">jQuery.tabulate.options.data.source</a></li>
 	
+	<li><a href="../symbols/jQuery.tabulate.options.elements.html">jQuery.tabulate.options.elements</a></li>
+	
+	<li><a href="../symbols/jQuery.tabulate.options.fragments.html">jQuery.tabulate.options.fragments</a></li>
+	
 	<li><a href="../symbols/jQuery.tabulate.options.keys.html">jQuery.tabulate.options.keys</a></li>
 	
 	<li><a href="../symbols/jQuery.tabulate.options.paths.html">jQuery.tabulate.options.paths</a></li>
+	
+	<li><a href="../symbols/jQuery.tabulate.options.paths.images.html">jQuery.tabulate.options.paths.images</a></li>
 	
 	<li><a href="../symbols/jQuery.tabulate.options.table.html">jQuery.tabulate.options.table</a></li>
 	
@@ -287,9 +291,9 @@ ul.inheritsList
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								jQuery.tabulate.<b><a href="../symbols/jQuery.tabulate.html#.columns">columns</a></b>
+								jQuery.tabulate.<b><a href="../symbols/jQuery.tabulate.html#.cache">cache</a></b>
 								</div>
-								<div class="description">The number of columns in the table (at its widest point)</div>
+								<div class="description">Contains any data that has already been loaded.</div>
 							</td>
 						</tr>
 					
@@ -297,9 +301,19 @@ ul.inheritsList
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								jQuery.tabulate.<b><a href="../symbols/jQuery.tabulate.html#.count">count</a></b>
+								jQuery.tabulate.<b><a href="../symbols/jQuery.tabulate.html#.columns">columns</a></b>
 								</div>
-								<div class="description">The total number of rows in the dataset.</div>
+								<div class="description">The number of columns in the table (at its widest point).</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								jQuery.tabulate.<b><a href="../symbols/jQuery.tabulate.html#.current_count">current_count</a></b>
+								</div>
+								<div class="description">The current number of rows in the data set.</div>
 							</td>
 						</tr>
 					
@@ -309,7 +323,17 @@ ul.inheritsList
 								<div class="fixedFont">
 								jQuery.tabulate.<b><a href="../symbols/jQuery.tabulate.html#.current_page">current_page</a></b>
 								</div>
-								<div class="description">The "page" of the dataset that is currently being viewed.</div>
+								<div class="description">The "page" of the data set that is currently being viewed.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								jQuery.tabulate.<b><a href="../symbols/jQuery.tabulate.html#.total_count">total_count</a></b>
+								</div>
+								<div class="description">The total number of rows in the data set.</div>
 							</td>
 						</tr>
 					
@@ -319,7 +343,7 @@ ul.inheritsList
 								<div class="fixedFont">
 								jQuery.tabulate.<b><a href="../symbols/jQuery.tabulate.html#.total_pages">total_pages</a></b>
 								</div>
-								<div class="description">The total number of "pages" in the dataset that are available for
+								<div class="description">The total number of "pages" in the data set that are available for
 viewing.</div>
 							</td>
 						</tr>
@@ -350,14 +374,14 @@ viewing.</div>
 							<td class="nameDescription">
 								<div class="fixedFont">jQuery.tabulate.<b><a href="../symbols/jQuery.tabulate.html#.apply_properties">apply_properties</a></b>(jQuery, Object, properties)
 								</div>
-								<div class="description">Applies properties to rows, columns and cells in the table.</div>
+								<div class="description">Applies properties to rows and cells in the table.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">jQuery.tabulate.<b><a href="../symbols/jQuery.tabulate.html#.build_section">build_section</a></b>(String, jQuery, Object)
+								<div class="fixedFont">jQuery.tabulate.<b><a href="../symbols/jQuery.tabulate.html#.build_section">build_section</a></b>(String, Object, Object)
 								</div>
 								<div class="description">Builds and appends a section of the table.</div>
 							</td>
@@ -384,7 +408,7 @@ viewing.</div>
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">jQuery.tabulate.<b><a href="../symbols/jQuery.tabulate.html#.go_to">go_to</a></b>(element, integer)
+								<div class="fixedFont">jQuery.tabulate.<b><a href="../symbols/jQuery.tabulate.html#.go_to">go_to</a></b>(integer)
 								</div>
 								<div class="description">Updates <a href="../symbols/jQuery.tabulate.html#.current_page">jQuery.tabulate.current_page</a> to point to the specified
 page.</div>
@@ -449,9 +473,9 @@ page.</div>
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont">jQuery.tabulate.<b><a href="../symbols/jQuery.tabulate.html#.update_filters">update_filters</a></b>(Object, Object)
+								<div class="fixedFont">jQuery.tabulate.<b><a href="../symbols/jQuery.tabulate.html#.update_filters">update_filters</a></b>(Object, Boolean, Object)
 								</div>
-								<div class="description">Updates the filters that will be applied to the current dataset.</div>
+								<div class="description">Updates the filters that will be applied to the current data set.</div>
 							</td>
 						</tr>
 					
@@ -500,15 +524,37 @@ page.</div>
 					Field Detail
 				</div>
 				
+					<a name=".cache"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{Object}</span>
+					<span class="light">jQuery.tabulate.</span><b>cache</b>
+					
+					</div>
+					<div class="description">
+						Contains any data that has already been loaded.
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name=".columns"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
-					<span class="light">{integer}</span>
+					<span class="light">{Number}</span>
 					<span class="light">jQuery.tabulate.</span><b>columns</b>
 					
 					</div>
 					<div class="description">
-						The number of columns in the table (at its widest point)
+						The number of columns in the table (at its widest point).
 						
 						
 					</div>
@@ -529,21 +575,19 @@ page.</div>
 
 					<hr />
 				
-					<a name=".count"> </a>
+					<a name=".current_count"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
-					<span class="light">{integer}</span>
-					<span class="light">jQuery.tabulate.</span><b>count</b>
+					<span class="light">{Number}</span>
+					<span class="light">jQuery.tabulate.</span><b>current_count</b>
 					
 					</div>
 					<div class="description">
-						The total number of rows in the dataset.
+						The current number of rows in the data set.
 
 <p>
-  This value is usually based on the value of
-  jQuery.tabulate.options.keys.rows, but in it's absence may also
-  be calculated by the number of rows found in the dataset.  It is
-  set in <a href="../symbols/jQuery.tabulate.html#.tabulate">jQuery.tabulate.tabulate</a>.
+  This value is set by counting the number of "data" items within
+  the returned data set.
 </p>
 						
 						
@@ -553,6 +597,13 @@ page.</div>
 
 						
 						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+							<dd>jQuery.tabulate.keys.data</dd>
+							
+							</dl>
 						
 						
 							<dl class="detailList">
@@ -568,16 +619,50 @@ page.</div>
 					<a name=".current_page"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
-					<span class="light">{integer}</span>
+					<span class="light">{Number}</span>
 					<span class="light">jQuery.tabulate.</span><b>current_page</b>
 					
 					</div>
 					<div class="description">
-						The "page" of the dataset that is currently being viewed.
+						The "page" of the data set that is currently being viewed.
 
 <p>
   Used by the internal pagination system to limit the current view of
-  the dataset.  This variable is modified by the navigation functions.
+  the data set.  This variable is modified by the navigation functions.
+</p>
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Default Value:</dt>
+							<dd>
+								1
+							</dd>
+							</dl>
+						
+
+					<hr />
+				
+					<a name=".total_count"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{Number}</span>
+					<span class="light">jQuery.tabulate.</span><b>total_count</b>
+					
+					</div>
+					<div class="description">
+						The total number of rows in the data set.
+
+<p>
+  This value may be set within the data set to allow for lazy-loading
+  data (not loading it all at once).
 </p>
 						
 						
@@ -591,11 +676,7 @@ page.</div>
 							<dl class="detailList">
 							<dt class="heading">See:</dt>
 							
-							<dd><a href="../symbols/jQuery.tabulate.html#.previous">jQuery.tabulate.previous</a></dd>
-							
-							<dd><a href="../symbols/jQuery.tabulate.html#.next">jQuery.tabulate.next</a></dd>
-							
-							<dd><a href="../symbols/jQuery.tabulate.html#.go_to">jQuery.tabulate.go_to</a></dd>
+							<dd>jQuery.tabulate.keys.count</dd>
 							
 							</dl>
 						
@@ -603,7 +684,7 @@ page.</div>
 							<dl class="detailList">
 							<dt class="heading">Default Value:</dt>
 							<dd>
-								1
+								0
 							</dd>
 							</dl>
 						
@@ -613,17 +694,17 @@ page.</div>
 					<a name=".total_pages"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
-					<span class="light">{integer}</span>
+					<span class="light">{Number}</span>
 					<span class="light">jQuery.tabulate.</span><b>total_pages</b>
 					
 					</div>
 					<div class="description">
-						The total number of "pages" in the dataset that are available for
+						The total number of "pages" in the data set that are available for
 viewing.
 
 <p>
   This value is calculated in <a href="../symbols/jQuery.tabulate.html#.tabulate">jQuery.tabulate.tabulate</a> based upon
-  the values of <a href="../symbols/jQuery.tabulate.html#.count">jQuery.tabulate.count</a> and jQuery.tabulate.filters.limit.
+  the values of jQuery.tabulate.count and <a href="../symbols/jQuery.tabulate.filters.html#.limit">jQuery.tabulate.filters.limit</a>.
 </p>
 						
 						
@@ -661,108 +742,7 @@ viewing.
 					
 					</div>
 					<div class="description">
-						Applies properties to rows, columns and cells in the table.
-
-<p>
-  Each row or column in the table may have any number of properties
-  assigned to it.  These properties are passed into the plugin upon
-  initialization as jQuery.tabulate.options.rows for rows, and
-  jQuery.tabulate.options.columns for columns.  The following
-  outlines valid properties for both rows and columns (note that
-  "cell" refers to a column within a row):
-</p>
-
-<ul>
-  <li>
-    <strong>name</strong> - The name associated with the current cell
-    or row.  In the case of an object, this would be the key.  In the
-    case of an Array, this would be the index.
-  </li>
-  <li>
-    <strong>data</strong> - The data associated with the current row.
-    It can be used for extracting the value of a key and storing it
-    as the cell's content.
-  </li>
-  <li>
-    <strong>args</strong> - An array of arguments to pass to the
-    callback function via javaScript's apply function.
-  </li>
-  <li>
-    <p>
-      <strong>callback</strong> - This is a function that will be
-      called when the cell or row is instantiated.  This is useful
-      for manipulating something based on the data assigned to a cell
-      or row.  Inside of the this function, <em>this</em> is equal to
-      <a href="../symbols/jQuery.tabulate.html">jQuery.tabulate</a>.  The arguments passed to this function vary
-      between cells and rows.
-    </p>
-    
-    <p>The arguments passed for a row are:</p>
-
-    <ul>
-      <li>
-        <strong>$row</strong> - The jQuery object representing the
-        current row.
-      </li>
-      <li>
-        <strong>row_data</strong> - The data associated with the current
-        row.
-      </li>
-    </ul>
-
-    <p>The arguments passed for a cell are:</p>
-
-    <ul>
-      <li>
-        <strong>$row</strong> - The jQuery object representing the
-        current row.
-      </li>
-      <li>
-        <strong>$cell</strong> - The jQuery object representing the
-        current cell.
-      </li>
-      <li>
-        <strong>$content</strong> - The jQuery object representing
-        $cell's content wrapper.
-      </li>
-      <li>
-        <strong>row_data</strong> - The data associated with the
-        current row.
-      </li>
-    </ul>
-  </li>
-  <li>
-    <strong>event_handlers</strong> - An object containing event
-    handlers to bind to the cell or row.  These should be defined in
-    the same format as <a href="../symbols/jQuery.tabulate.event_handlers.html">jQuery.tabulate.event_handlers</a>.
-  </li>
-  <li>
-    <strong>styles</strong> - An object containing style information
-    to be applied to the row or cell. This object is passed to the
-    <a href="http://api.jquery.com/jQuery.css/">jQuery.css</a>
-    function.
-  </li>
-</ul>
-
-<p>
-  Columns may also contain these properties, in addition to those
-  defined above:
-</p>
-
-<ul>
-  <li>
-    <strong>$content</strong> - The jQuery object in which to append
-    content inside of. If not given, defaults to $element.
-  </li>
-  <li>
-    <strong>content</strong> - The content to append inside $content.
-    Content can be passed in as a string, a jQuery object, or as a
-    key within the dataset <em>data</em>. If you wish to pass in a
-    key, you may do so within curly braces like so: "{some_key}".  If
-    the key is nested within the dataset, you may separate each level
-    by use of a dot like so: "{obj.prop.key}".
-  </li>
-</ul>
+						Applies properties to rows and cells in the table.
 						
 						
 					</div>
@@ -783,7 +763,7 @@ viewing.
 									<b>Object</b>
 									
 								</dt>
-								<dd>properties An object containing the properties.</dd>
+								<dd>settings An object containing settings for the</dd>
 							
 								<dt>
 									<b>properties</b>
@@ -809,15 +789,9 @@ viewing.
 							<dl class="detailList">
 							<dt class="heading">See:</dt>
 							
-								<dd><a href="http://api.jquery.com/jQuery.css/">jQuery.css</a></dd>
+								<dd>jQuery.table.body.rows</dd>
 							
-								<dd><a href="https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/Function/apply">Function.apply</a></dd>
-							
-								<dd>jQuery.tabulate.options.rows</dd>
-							
-								<dd>jQuery.tabulate.options.columns</dd>
-							
-								<dd><a href="../symbols/jQuery.tabulate.event_handlers.html">jQuery.tabulate.event_handlers</a></dd>
+								<dd>jQuery.table.body.cells</dd>
 							
 							</dl>
 						
@@ -828,7 +802,7 @@ viewing.
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">jQuery.tabulate.</span><b>build_section</b>(String, jQuery, Object)
+					<span class="light">jQuery.tabulate.</span><b>build_section</b>(String, Object, Object)
 					
 					</div>
 					<div class="description">
@@ -847,32 +821,26 @@ viewing.
 									<b>String</b>
 									
 								</dt>
-								<dd>name The name of the section</dd>
-							
-								<dt>
-									<b>jQuery</b>
-									
-								</dt>
-								<dd>$element The element to append rows to</dd>
+								<dd>section The name of the section</dd>
 							
 								<dt>
 									<b>Object</b>
 									
 								</dt>
-								<dd>data The data to populate the section with</dd>
+								<dd>options Contains the section key, $section fragment
+       and any additional properties to bestow upon the section.</dd>
+							
+								<dt>
+									<b>Object</b>
+									
+								</dt>
+								<dd>data The data given to tabulate</dd>
 							
 							</dl>
 						
 						
 						
 						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd>Number The number of columns in the section.</dd>
-							
-							</dl>
 						
 						
 						
@@ -978,7 +946,7 @@ viewing.
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">jQuery.tabulate.</span><b>go_to</b>(element, integer)
+					<span class="light">jQuery.tabulate.</span><b>go_to</b>(integer)
 					
 					</div>
 					<div class="description">
@@ -999,12 +967,6 @@ page.
 						
 							<dl class="detailList">
 							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>element</b>
-									
-								</dt>
-								<dd>element The DOM element that was clicked.</dd>
 							
 								<dt>
 									<b>integer</b>
@@ -1035,7 +997,7 @@ page.
 
 <p>
   Merges default options with those passed in, builds the table
-  skeleton, creates jQuery objects from jQuery.tabulate.options.elements
+  skeleton, creates jQuery objects from <a href="../symbols/jQuery.tabulate.options.elements.html">jQuery.tabulate.options.elements</a>
   and binds any needed event handlers.  Finally, triggers
   <a href="../symbols/jQuery.tabulate.event_handlers.html#event:.event:post_init">jQuery.tabulate.event_handlers.event:post_init</a>.
 </p>
@@ -1281,24 +1243,11 @@ page.
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">jQuery.tabulate.</span><b>update_filters</b>(Object, Object)
+					<span class="light">jQuery.tabulate.</span><b>update_filters</b>(Object, Boolean, Object)
 					
 					</div>
 					<div class="description">
-						Updates the filters that will be applied to the current dataset.
-
-<p>
-  This function will merge any filters that are passed in with those
-  already present, overwriting any values that are already contained
-  in the filters Object.  Any type of filter may be passed in here,
-  including custom filters that you wish to pass to your controller.
-</p>
-
-<p>
-  When the merge is complete, the current_page will be reset to 1 and
-  the <a href="../symbols/jQuery.tabulate.event_handlers.html#event:.event:refresh">jQuery.tabulate.event_handlers.event:refresh</a> event handler is
-  called which reloads the data with the new filters applied.
-</p>
+						Updates the filters that will be applied to the current data set.
 						
 						
 					</div>
@@ -1313,13 +1262,22 @@ page.
 									<b>Object</b>
 									
 								</dt>
-								<dd>filters The filters to apply to the dataset.</dd>
+								<dd>filters The filters to apply to the data set.</dd>
+							
+								<dt>
+									<b>Boolean</b>
+									
+								</dt>
+								<dd>overwrite Whether or not to overwrite the current filters
+       with the new filters. Defaults to true.  If false, the two filter
+       objects would be merged.</dd>
 							
 								<dt>
 									<b>Object</b>
 									
 								</dt>
-								<dd>refresh Whether or not to call the refresh handler. Defaults to true.</dd>
+								<dd>refresh Whether or not to call the refresh handler.
+       Defaults to true.</dd>
 							
 							</dl>
 						
@@ -1344,7 +1302,7 @@ page.
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Thu Sep 16 2010 17:15:10 GMT-0700 (PDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Tue Oct 12 2010 18:14:07 GMT-0700 (PDT)
 		</div>
 	</body>
 </html>

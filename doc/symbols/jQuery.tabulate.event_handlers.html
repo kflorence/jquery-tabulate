@@ -201,11 +201,9 @@ ul.inheritsList
 	
 	<li><a href="../symbols/jQuery.tabulate.event_handlers.html">jQuery.tabulate.event_handlers</a></li>
 	
+	<li><a href="../symbols/jQuery.tabulate.filters.html">jQuery.tabulate.filters</a></li>
+	
 	<li><a href="../symbols/jQuery.tabulate.options.html">jQuery.tabulate.options</a></li>
-	
-	<li><a href="../symbols/jQuery.tabulate.options.%24elements.html">jQuery.tabulate.options.$elements</a></li>
-	
-	<li><a href="../symbols/jQuery.tabulate.options.%24fragments.html">jQuery.tabulate.options.$fragments</a></li>
 	
 	<li><a href="../symbols/jQuery.tabulate.options.data.html">jQuery.tabulate.options.data</a></li>
 	
@@ -213,9 +211,15 @@ ul.inheritsList
 	
 	<li><a href="../symbols/jQuery.tabulate.options.data.source.html">jQuery.tabulate.options.data.source</a></li>
 	
+	<li><a href="../symbols/jQuery.tabulate.options.elements.html">jQuery.tabulate.options.elements</a></li>
+	
+	<li><a href="../symbols/jQuery.tabulate.options.fragments.html">jQuery.tabulate.options.fragments</a></li>
+	
 	<li><a href="../symbols/jQuery.tabulate.options.keys.html">jQuery.tabulate.options.keys</a></li>
 	
 	<li><a href="../symbols/jQuery.tabulate.options.paths.html">jQuery.tabulate.options.paths</a></li>
+	
+	<li><a href="../symbols/jQuery.tabulate.options.paths.images.html">jQuery.tabulate.options.paths.images</a></li>
 	
 	<li><a href="../symbols/jQuery.tabulate.options.table.html">jQuery.tabulate.options.table</a></li>
 	
@@ -300,6 +304,15 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont">jQuery.tabulate.event_handlers.<b><a href="../symbols/jQuery.tabulate.event_handlers.html#event:.no_results">no_results</a></b>(Object)
+								</div>
+								<div class="description">Called if there was no data to tabulate upon.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont">jQuery.tabulate.event_handlers.<b><a href="../symbols/jQuery.tabulate.event_handlers.html#event:.post_init">post_init</a></b>(Object)
 								</div>
 								<div class="description">Called after <a href="../symbols/jQuery.tabulate.html#.init">jQuery.tabulate.init</a> finishes processing.</div>
@@ -329,7 +342,16 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont">jQuery.tabulate.event_handlers.<b><a href="../symbols/jQuery.tabulate.event_handlers.html#event:.refresh">refresh</a></b>(Object, Object, Object)
 								</div>
-								<div class="description">Generally called when data needs to be re-loaded.</div>
+								<div class="description">Refresh changes the scope of the data shown.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">jQuery.tabulate.event_handlers.<b><a href="../symbols/jQuery.tabulate.event_handlers.html#event:.reset">reset</a></b>(Object)
+								</div>
+								<div class="description">Resets tabulate back to it's default state.</div>
 							</td>
 						</tr>
 					
@@ -438,11 +460,47 @@ ul.inheritsList
 							<dl class="detailList">
 							<dt class="heading">See:</dt>
 							
-								<dd>jQuery.tabulate.options.elements.$loading</dd>
+								<dd><a href="../symbols/jQuery.tabulate.options.elements.html#.$loading">jQuery.tabulate.options.elements.$loading</a></dd>
 							
 								<dd>The jQuery <a href="http://api.jquery.com/category/events/event-object/">Event</a> Object</dd>
 							
 							</dl>
+						
+
+					<hr />
+				
+					<a name="event:.no_results"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">jQuery.tabulate.event_handlers.</span><b>no_results</b>(Object)
+					
+					</div>
+					<div class="description">
+						Called if there was no data to tabulate upon.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>Object</b>
+									
+								</dt>
+								<dd>event The jQuery Event object.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
 						
 
 					<hr />
@@ -610,7 +668,9 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						Generally called when data needs to be re-loaded.
+						Refresh changes the scope of the data shown.  This might mean
+gathering and displaying new data, or simply changing the display 
+scope of data we already have.
 						
 						
 					</div>
@@ -655,6 +715,42 @@ ul.inheritsList
 							</dl>
 						
 
+					<hr />
+				
+					<a name="event:.reset"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">jQuery.tabulate.event_handlers.</span><b>reset</b>(Object)
+					
+					</div>
+					<div class="description">
+						Resets tabulate back to it's default state.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>Object</b>
+									
+								</dt>
+								<dd>event The jQuery Event Object</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
 					
 				
 			
@@ -666,7 +762,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Thu Sep 16 2010 17:15:10 GMT-0700 (PDT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.2 on Tue Oct 12 2010 18:14:07 GMT-0700 (PDT)
 		</div>
 	</body>
 </html>
