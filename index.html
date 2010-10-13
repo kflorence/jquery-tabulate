@@ -11,7 +11,7 @@
         
         <script type="text/javascript">
         jQuery(function($) {
-            $("#tabulate").tabulate({
+            $("#tabulate-ajax").tabulate({
                 data: {
                     source: {
                         ajax: {
@@ -19,19 +19,32 @@
                             dataType: "json"
                         }
                     }
+                }
+            });
+
+            $("#tabulate-json").tabulate({
+                data: {
+                    source: {
+                        json: {
+							"head": [
+								["heading 1", "heading 2", "heading 3"]
+							],
+            				"body": [
+            				    ["column 1", "column 2", "column 3"],
+            				    ["column 1", "column 2", "column 3"]
+            				]
+    					}
+                    }
                 },
                 table: {
-                    body: {
-                        columns: {
-	                        "col1": {
-	                            content: "{col1}",
-	                            events: {
-	                                "click": function(event, $cell, $content, data) {
-	                                    console.log("click", event, $cell, $content, data);
-	                                }
-	                            }
-	                        }
-	                    }
+                	body: {
+						rows: {
+							0: {
+								filter: function($row, $content, data) {
+									$row.css("background-color", "#EEEEEE");
+	                			}
+                			}
+                		}
                     }
                 }
             });
@@ -39,7 +52,13 @@
         </script>
     </head>
     <body>
+    	<h1>jQuery.tabulate</h1>
         <p><a href="doc/" class="api">Documentation</a></p>
-        <div id="tabulate"></div>
+
+        <h2>Tabulate via AJAX request</h2>
+        <div id="tabulate-ajax"></div>
+
+        <h2>Tabulate via static JSON</h2>
+        <div id="tabulate-json"></div>
     </body>
 </html>
