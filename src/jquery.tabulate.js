@@ -5,116 +5,70 @@
  * @version 2.4.20110303
  */
 ;(function($, window, undefined) {
+  // For better minification
+  var refresh = "refresh", loading = "loading", ready = "ready",
+    hover = "hover", odd = "odd", even = "even", obj = "object",
+    str = "string", bool = "boolean";
+
   /**
    * The tabulate class.
    */
   $.tabulate = {
     cache: {},
-    current_count: 0,
-    current_page: 1,
-    total_count: 0,
-    total_pages: 1,
+    eventHandlers: {},
+    errorHandlers: {},
+    currentCount: 0,
+    currentPage: 1,
+    totalCount: 0,
+    totalPages: 1,
     columns: 0,
     filters: {
       limit: 0,
       offset: 0
     },
-
     options: {
-      name: "tabulate",
       debug: false,
-      results_per_page: [5, 10, 25],
-      parse_key: function() {
+      namespace: "tabulate",
+      resultsPerPage: [5, 10, 25],
+      parseKey: function() {
         return new RegExp(/\{([^{}]+)\}/g);
       },
-      paths: {
-        tabulate: window.location.pathname.replace(/\/$/, ''),
-        theme: "themes/default",
-        images: {
-          previous: "images/prev.png",
-          next: "images/next.png"
-        }
-      },
-
       data: {
         source: {},
         filters: {}
       },
-
-      /**
-       * Contains the sections of the table and their settings.  By default,
-       * the sections "head", "body" and "foot" have been defined for you.
-       * You may use these sections for your table, overwrite them, or
-       * define your own.
-       */
       table: {
         head: {
-          container: $('<thead class="tabulate-header"></thead>')
+          template: "<thead></thead>"
         },
         body: {
-          container: $('<tbody class="tabulate-body"></tbody>')
+          template: "<tbody></tbody>"
         },
         foot: {
-          container: $('<tfoot class="tabulate-footer"></tfoot>')
+          template: "<tfoot></tfoot>"
         }
       },
-
-      /**
-       * Keys help tabulate find relevant information in your data set.
-       */
       keys: {
         data: "body",
         count: "count"
       },
-
-      /**
-       * Contains the jQuery selectors for key elements.
-       */
       elements: {
-        $loading: ".tabulate-loading",
-        $previous: ".tabulate-prev",
-        $next: ".tabulate-next",
-        $count: ".tabulate-count",
-        $total_pages: ".tabulate-total-pages",
-        $current_page: ".tabulate-current-page",
-        $results_per_page: ".tabulate-results-per-page"
+        loading: ".loading",
+        previous: ".previous",
+        next: ".next",
+        count: ".count",
+        totalPages: ".total-pages",
+        currentPage: ".current-page",
+        resultsPerPage: ".results-per-page"
       },
-
-      /**
-       * Contains jQuery objects generated from HTML fragments.
-       */
-      fragments: {
-        $link: $('<a />'),
-        $image: $('<img />'),
-        $option: $('<option />'),
-        $row: $('<tr class="tabulate-row"></tr>'),
-        $cell: $('<td class="tabulate-cell"></td>'),
-        $content: $('<div class="tabulate-content"></div>'),
-        $container: $('<table class="tabulate-container"></table>'),
-        $navigation: $(
-          [
-            '<div class="tabulate-navigation clearfix">',
-            '  <div class="tabulate-partition tabulate-partition-first tabulate-pagination">',
-            '    <img class="tabulate-prev" />',
-            '    page <input class="tabulate-current-page" type="text" />',
-            '    of <span class="tabulate-total-pages"></span>',
-            '    <img class="tabulate-next" />',
-            '  </div>',
-            '  <div class="tabulate-partition tabulate-partition-no-input">',
-            '    <span class="tabulate-count">0</span> total results',
-            '  </div>',
-            '  <div class="tabulate-partition tabulate-partition-no-input">',
-            '    <div class="tabulate-loading"><span>Loading...</span></div>',
-            '  </div>',
-            '  <div class="tabulate-partition tabulate-partition-last">',
-            '    <select class="tabulate-results-per-page"></select> results per page',
-            '  </div>',
-            '</div>',
-          ].join('')
-        )
+      templates: {
+        row: "<tr></tr>",
+        cell: "<td></td>",
+        cellContent: "<div></div>",
+        table: "<table></table>"
       },
-      event_handlers: {},
-      error_handlers: {}
+      eventHandlers: {},
+      errorHandlers: {}
     },
 
     /**
@@ -123,78 +77,75 @@
      * @param {jQuery} $wrapper
      *    The element passed in from the jQuery function.
      *
-     * @param {Object} options 
+     * @param {Object} options
      *    Options to overwrite the default ones with.
      */
-    init: function($wrapper, options) {
+    initialize: function(element, options) {
+      $.extend(true, this.options, options || {});
+
+      // Only if this element doesn't already contain an instance of tabulate
+      if ($.data(element, this.options.namespace)) {
+        return;
+      }
+
       var self = this;
 
-      // extend default options, then attach to this instance
-      $.extend(true, this.options, options || {});
-      $.extend(true, this, this.options);
-      $.extend(this, {
-        $navigation: this.fragments.$navigation.clone(),
-        $container: this.fragments.$container.clone(),
-        $wrapper: $wrapper
-      });
-
-      // build container
-      this.$wrapper.append(this.$container).append(this.$navigation);
-
-      // generate full themes path
-      this.paths.theme = [this.paths.tabulate, this.paths.theme].join("/");
+      // Attach instance to element
+      this.$element = $(element).data(this.options.namespace, this);
 
       // set limit to first item in results per page array, if not set
-      this.filters.limit = this.filters.limit || this.results_per_page[0];
+      this.filters.limit = this.filters.limit || this.options.resultsPerPage[0];
 
-      // Build out elements
-      $.each(this.elements, function(key, value) {
-        self.elements[key] = $(value, $wrapper);
+      // Set up elements
+      this.elements = {};
+      $.each(this.options.elements, function(name, selector) {
+        self.elements["$" + name] = $(selector)
+          .addClass([self.namespace, name].join("-"));
       });
 
-      // navigation: previous
+      // Set up templates
+      this.templates = {};
+      $.each(this.options.templates, function(name, content) {
+        self.templates["$" + name] = $(content)
+          .addClass([self.namespace, name].join("-"));
+      });
+
+      this.$element.append(this.templates.$table);
+
       if (this.elements.$previous.length) {
-        this.elements.$previous.attr({
-          src: [this.paths.theme, this.paths.images.previous].join("/"),
-          alt: "Previous Page",
-          title: "Previous Page"
-        }).click(function() {
-          self.previous(this); return false;
+        this.elements.$previous.click(function() {
+          self.previous(this);
+          return false;
         });
       }
 
-      // navigation: next
       if (this.elements.$next.length) {
-        this.elements.$next.attr({
-          src: [this.paths.theme, this.paths.images.next].join("/"),
-          alt: "Next Page",
-          title: "Next Page"
-        }).click(function() {
-          self.next(this); return false;
+        this.elements.$next.click(function() {
+          self.next(this);
+          return false;
         });
       }
 
-      // navigation: current page
-      if (this.elements.$current_page.length) {
-        this.elements.$current_page.keyup(function(event) {
+      if (this.elements.$currentPage.length) {
+        this.elements.$currentPage.keyup(function(e) {
           var page = parseInt($(this).val());
 
-          if (!isNaN(page) && event.which == 13) {
-            self.go_to(page);
+          if (!isNaN(page) && e.which == 13) {
+            self.select(page);
           }
         });
       }
 
-      // navigation: results per page
-      if (this.elements.$results_per_page.length) {
-        $.each(this.results_per_page, function(i, value) {
-          self.elements.$results_per_page.append(
-            self.fragments.$option.clone().val(value).text(value)
+      if (this.elements.$resultsPerPage.length) {
+        var $option = $('<option />');
+
+        $.each(this.options.resultsPerPage, function(i, value) {
+          self.elements.$resultsPerPage.append(
+            $option.clone().val(value).text(value)
           );
         });
 
-        // handle results per page change
-        this.elements.$results_per_page.change(function() {
+        this.elements.$resultsPerPage.change(function() {
           var limit = parseInt($(this).val());
 
           if (!isNaN(limit)) {
@@ -204,15 +155,15 @@
         });
       }
 
-      // bind event handlers
-      $.each(this.event_handlers, function(name, handler) {
-        self.$wrapper.bind([name, self.name].join("."), function() {
+      $.each(this.eventHandlers, function(eventType, handler) {
+        var eventName = [eventType, self.options.namespace].join(".");
+
+        self.$element.bind(eventName, function() {
           handler.apply(self, arguments);
         });
       });
 
-      // done with initialization
-      this.trigger("post_init");
+      this.trigger("initialized");
     },
 
     /**
@@ -222,10 +173,8 @@
      *    The DOM element that was clicked.
      */
     previous: function(element) {
-      if (this.current_page > 1) {
-        this.current_page--;
-        this.filters.offset = ((this.current_page - 1) * this.filters.limit);
-        this.trigger("refresh");
+      if (this.currentPage > 1) {
+        this.select(this.currentPage - 1);
       }
     },
 
@@ -236,10 +185,8 @@
      *    The DOM element that was clicked.
      */
     next: function(element) {
-      if (this.current_page < this.total_pages) {
-        this.current_page++;
-        this.filters.offset = ((this.current_page - 1) * this.filters.limit);
-        this.trigger("refresh");
+      if (this.currentPage < this.totalPages) {
+        this.select(this.currentPage + 1);
       }
     },
 
@@ -249,11 +196,11 @@
      * @param {number} page
      *    An integer value specifying the page to go to.
      */
-    go_to: function(page) {
-      if (page >= 1 && page <= this.total_pages) {
-        this.current_page = page;
-        this.filters.offset = ((this.current_page - 1) * this.filters.limit);
-        this.trigger("refresh");
+    select: function(page) {
+      if (page >= 1 && page <= this.totalPages) {
+        this.currentPage = page;
+        this.filters.offset = ((this.currentPage - 1) * this.filters.limit);
+        this.trigger(refresh);
       }
     },
 
@@ -270,17 +217,17 @@
      * @param {Object} refresh
      *    Whether or not to call the refresh handler. Defaults to true.
      */
-    update_filters: function(filters, overwrite, refresh) {
+    updateFilters: function(filters, overwrite, refresh) {
       filters = filters || {};
 
       if (overwrite !== false) {
-        this.data.filters = filters;
+        this.options.data.filters = filters;
       } else {
-        $.extend(true, this.data.filters, filters || {});
+        $.extend(true, this.options.data.filters, filters || {});
       }
 
       if (refresh !== false) {
-        this.trigger("refresh");
+        this.trigger(refresh);
       }
     },
 
@@ -288,8 +235,8 @@
      * Convenience function for displaying error information.
      */
     error: function() {
-      if (this.debug && window.console && window.console.log) {
-        window.console.log("jquery.tabulate [error]: ", arguments);
+      if (this.debug && console && console.log) {
+        console.log("Error [" + this.options.namespace + "]: ", arguments);
       }
     },
 
@@ -302,9 +249,11 @@
      * @param {Array} args
      *    The Array of arguments to pass to the handler function.
      */
-    trigger: function(name, args) {
-      this.$wrapper.triggerHandler([name, this.name].join("."),
-        args ? ($.isArray(args) ? args : [args]) : []);
+    trigger: function(eventType, args) {
+      this.$element.triggerHandler(
+        [eventType, this.options.namespace].join("."),
+        args ? ($.isArray(args) ? args : [args]) : []
+      );
     },
 
     /**
@@ -316,44 +265,44 @@
      * @param {Object} filters
      *    Filters that will apply to this request only.
      */
-    gather_data: function(request, filters) {
-      var self = this, request = request || {}, filters = filters || {};
+    gatherData: function(request, filters) {
+      request = request || {};
+      filters = filters || {};
 
       // gather JSON data via AJAX request
       if (request.ajax) {
-        filters = $.extend(true, {}, this.filters, this.data.filters, filters);
+        var self = this;
 
         // merge request with additional internal arguments
-        var request = $.extend(true, {}, request.ajax, {
-          data: filters,
+        $.ajax($.extend({}, request.ajax, {
+          data: $.extend(true, {}, this.filters, this.options.data.filters, filters),
+          // TODO: implement caching!!
           success: function(data) {
-            $.extend(true, data, request.json || {});
+            if (request.ajax.success) {
+              request.ajax.success.apply(self, arguments);
+            }
 
-            // TODO: not truly cached, because if results_per_page
-            // changes, cache is cleared.  so only semi-cached.
-            $.each(data, function(key, value) {
-              if (!self.cache[key] || !$.isArray(value)) {
-                self.cache[key] = value;
-              } else {
-                $.merge(self.cache[key], value);
-              }
-            });
-
-            self.trigger("loading", false);
-            self.trigger("post_load", self.cache);
+            self.trigger(ready, data);
           },
           error: function() {
-            self.error_handlers.ajax.apply(self, arguments);
+            if (request.ajax.error) {
+              request.ajax.error.apply(self, arguments);
+            } else {
+              self.errorHandlers.ajax.apply(self, arguments);
+            }
+          },
+          complete: function() {
+            if (request.ajax.complete) {
+              request.ajax.complete.apply(self, arguments);
+            }
+
+            self.trigger(loading, false);
           }
-        });
+        }));
 
-        this.trigger("loading", true);
-        $.ajax(request);
-      }
-
-      // Use JSON data we already have
-      else if (request.json) {
-        this.trigger("post_load", request.json);
+        this.trigger(loading, true);
+      } else if (request.json) {
+        this.trigger(ready, request.json);
       }
     },
 
@@ -364,35 +313,27 @@
      *    The object containing the data to tabulate.
      */
     tabulate: function(data) {
-      var self = this, data = data || {};
+      data = data || {};
 
-      // get count of paginatable results
-      this.current_count = $.getLength(data[this.keys.data]) || 0;
-
-      // for total count, use count key if given, otherwise use current count
-      this.total_count = parseInt(data[this.keys.count]) || this.current_count;
-
-      // total pages = count / limit (or 1, if count or limit = 0)
-      this.total_pages = Math.ceil(this.total_count / this.filters.limit) || 1;
-
-      // current page = offset / limit + 1
-      this.current_page = Math.floor(this.filters.offset / this.filters.limit) + 1;
+      this.currentCount = $.getLength(data[this.options.keys.data]) || 0;
+      this.totalCount = parseInt(data[this.options.keys.count]) || this.currentCount;
+      this.totalPages = Math.ceil(this.totalCount / this.filters.limit) || 1;
+      this.currentPage = Math.floor(this.filters.offset / this.filters.limit) + 1;
 
       // clear out the old data
-      this.$container.children().empty();
+      this.templates.$table.children().empty();
 
       // if total count is zero, we have nothing to tabulate
-      if (this.total_count === 0) {
-        this.trigger("no_results");
-      } else {
-        $.each(this.table, function(section, options) {
-          self.build_section(section, options,
+      if (this.totalCount !== 0) {
+        var self = this;
+
+        $.each(this.options.table, function(section, options) {
+          self.buildSection(section, options,
             $.getObject(options.key || section, data) || []);
         });
       }
 
-      // fire post_tabulate handler
-      this.trigger("post_tabulate", data);
+      this.trigger("done", data);
     },
 
     /**
@@ -408,51 +349,52 @@
      * @param {Object} data
      *    The data given to tabulate
      */
-    build_section: function(name, options, data) {
-      // if no containing element is given, there is nothing to do
-      if (!options.container || !options.container.length) {
+    buildSection: function(name, options, data) {
+      if (!options.template) {
         return;
       }
 
-      var self = this, $section = options.container.clone(),
-        data = data.slice(this.filters.offset, this.filters.offset + this.filters.limit);
+      var self = this,
+        $section = $(options.template).clone(), data = data.slice(
+          this.filters.offset, this.filters.offset + this.filters.limit
+        );
 
       // append section to table
-      this.$container.append($section);
+      this.templates.$table.append($section);
 
       // build rows
       $.each(data, function(r, row) {
-        var empty = true,
-          r = r.toString(),
-          $row = self.fragments.$row.clone();
+        var empty = true, r = r.toString(),
+          $row = self.templates.$row.clone();
 
         // build cells
         $.each(row, function(c, cell) {
           var c = c.toString(),
-            $cell = self.fragments.$cell.clone(),
-            $content = self.fragments.$content.clone();
+            $cell = self.templates.$cell.clone(),
+            $cellContent = self.templates.$cellContent.clone();
 
-          $cell.append($content);
+          $cell.append($cellContent);
 
-          self.apply_properties($cell, {
+          self.applyProperties($cell, {
             key: c,
             type: "column",
             dataset: data[r]
           }, $.getObject(c, options.cells));
 
           // append to row, add hover classes (for IE)
-          $row.append($cell.hover(
-            function() { $(this).addClass("tabulate-hover"); },
-            function() { $(this).removeClass("tabulate-hover"); }
-          ));
+          $row.append($cell.bind("mouseenter mouseleave", function() {
+            $(this).addClass([self.options.namespace, hover].join("-"));
+          }));
 
           // set render to true if we have cell content
-          if (empty && $content.html()) empty = false;
+          if (empty && $cellContent.html()) {
+            empty = false;
+          }
         });
 
         // at least one cell needs content to append row
         if (!empty) {
-          self.apply_properties($row, {
+          self.applyProperties($row, {
             key: r,
             type: "row",
             dataset: data
@@ -488,10 +430,9 @@
      * @return {jQuery}
      *    The modified element.
      */
-    apply_properties: function($element, settings, properties) {
-      var self = this,
-        dataset = settings.dataset || {},
-        key = (typeof settings.key !== "undefined" ? settings.key : "");
+    applyProperties: function($element, settings, properties) {
+      var self = this, dataset = settings.dataset || {},
+        key = (typeof settings.key != "undefined" ? settings.key : "");
 
       $element.each(function(i, element) {
         var $element = $(element),
@@ -518,7 +459,7 @@
                   $content.append(value);
                 } else {
                   $content.append((typeof value === "function" ? value.apply(self, args) : value)
-                    .replace(self.parse_key(), function(str, key) {
+                    .replace(self.parseKey(), function(str, key) {
                       return $.getObject(key, dataset) || "";
                     })
                   );
@@ -534,138 +475,131 @@
         });
       });
     },
-
-    event_handlers: {
-      /**
-       * Changes or updates the scope of the data shown.
-       *
-       * @param {Object} event
-       *    The jQuery.Event object
-       *
-       * @param {Object} request
-       *    The data request object
-       *
-       * @param {Object} filters
-       *    Filters to apply to the request
-       */
-      refresh: function(event, request, filters) {
-        if ((this.current_count === 0)
-          || (this.filters.offset + this.filters.limit > this.current_count)
-          && (this.current_count < this.total_count)) {
-          this.gather_data(request || this.data.source, filters);
-        } else {
-          this.tabulate(this.cache);
-        }
-      },
-
-      /**
-       * Shows or hides the loading element.
-       *
-       * @param {Object} event
-       *    The jQuery.Event Object
-       *
-       * @param {Boolean} [bool]
-       *    Whether or not to show the loading element. By default, the element
-       *    will be toggled.
-       */
-      loading: function(event, bool) {
-        if (typeof bool == "boolean") {
-          this.elements.$loading[(bool ? "addClass" : "removeClass")]("loading");
-        } else {
-          this.elements.$loading.toggleClass("loading");
-        }
-      },
-
-      /**
-       * Called after initialization.
-       *
-       * @param {Object} event
-       *    The jQuery Event Object
-       */
-      post_init: function(event) {
-        this.gather_data(this.data.source);
-      },
-
-      /**
-       * Called after loading data.
-       *
-       * @param {Object} event
-       *    The jQuery Event Object
-       *
-       * @param {Object} data
-       *    The data that was loaded.
-       */
-      post_load: function(event, data) {
-        this.tabulate(data);
-      },
-
-      /**
-       * Called after tabulate finishes processing.
-       *
-       * @param {Object} event
-       *    The jQuery Event Object
-       *
-       * @param {Object} data
-       *    The data object that was passed into tabulate.
-       */
-      post_tabulate: function(event, data) {
-        this.elements.$count.text(this.total_count);
-        this.elements.$total_pages.text(this.total_pages);
-        this.elements.$current_page.val(this.current_page);
-      },
-
-      /**
-       * Called if there was no data to tabulate upon.
-       *
-       * @param {Object} event
-       *    The jQuery Event object.
-       */
-      no_results: function(event) {
-        this.$navigation.before(this.fragments.$content.clone()
-          .addClass("tabulate-no-results").text("No results found")
-        );
-      },
-
-      /**
-       * Resets tabulate back to it's default state.
-       *
-       * @param {Object} event
-       *    The jQuery Event Object
-       */
-      reset: function(event) {
-        this.cache = {};
-        this.total_count = this.current_count = 0;
-        this.go_to(1);
-      }
-    },
-
-    error_handlers: {
-      /**
-       * Handles AJAX request errors.
-       *
-       * @param {Object} xhr
-       *    The XMLHttpRequest Object
-       *
-       * @param {String} status
-       *    A String describing the type of error that occurred
-       *
-       * @param {Exception} error
-       *    An exception object, if one occurred
-       */
-      ajax: function(xhr, status, error) {
-        this.error(xhr, status, error);
-      }
-    },
-
     /**
      * Object.toString override
      *
      * @return String "[object instance.name]"
      */
     toString: function() {
-      return "[object " + this.name + "]";
+      return "[" + obj + " " + this.name + "]";
     }
   };
+
+  $.extend($.tabulate.eventHandlers, {
+    /**
+     * Changes or updates the scope of the data shown.
+     *
+     * @param {Object} event
+     *    The jQuery.Event object
+     *
+     * @param {Object} request
+     *    The data request object
+     *
+     * @param {Object} filters
+     *    Filters to apply to the request
+     */
+    refresh: function(event, request, filters) {
+      if ((this.currentCount === 0)
+        || (this.filters.offset + this.filters.limit > this.currentCount)
+        && (this.currentCount < this.totalCount)) {
+        this.gatherData(request || this.options.data.source, filters);
+      } else {
+        this.tabulate(this.cache);
+      }
+    },
+
+    /**
+     * Shows or hides the loading element.
+     *
+     * @param {Object} event
+     *    The jQuery.Event Object
+     *
+     * @param {Boolean} [bool]
+     *    Whether or not to show the loading element. By default, the element
+     *    will be toggled.
+     */
+    loading: function(event, bool) {
+      if (typeof bool == "boolean") {
+        this.elements.$loading[(bool ? "addClass" : "removeClass")]("loading");
+      } else {
+        this.elements.$loading.toggleClass("loading");
+      }
+    },
+
+    /**
+     * Called after initialization.
+     *
+     * @param {Object} event
+     *    The jQuery Event Object
+     */
+    initialized: function(event) {
+      this.gatherData(this.options.data.source);
+    },
+
+    /**
+     * Called after loading data.
+     *
+     * @param {Object} event
+     *    The jQuery Event Object
+     *
+     * @param {Object} data
+     *    The data that was loaded.
+     */
+    ready: function(event, data) {
+      this.tabulate(data);
+    },
+
+    /**
+     * Called after tabulate finishes processing.
+     *
+     * @param {Object} event
+     *    The jQuery Event Object
+     *
+     * @param {Object} data
+     *    The data object that was passed into tabulate.
+     */
+    done: function(event, data) {
+      if (this.totalCount === 0) {
+        this.$navigation.before(this.fragments.$content.clone()
+          .addClass("tabulate-no-results").text("No results found")
+        );
+      }
+
+      this.elements.$count.text(this.totalCount);
+      this.elements.$totalPages.text(this.totalPages);
+      this.elements.$currentPage.val(this.currentPage);
+    },
+
+    /**
+     * Resets the table to its default state.
+     *
+     * @param {Object} event
+     *    The jQuery Event Object
+     */
+    reset: function(event) {
+      this.cache = {};
+      this.totalCount = this.currentCount = 0;
+      this.select(1);
+    }
+  });
+
+  $.extend($.tabulate.errorHandlers, {
+    /**
+     * Handles AJAX request errors.
+     *
+     * @param {Object} xhr
+     *    The XMLHttpRequest Object
+     *
+     * @param {String} status
+     *    A String describing the type of error that occurred
+     *
+     * @param {Exception} error
+     *    An exception object, if one occurred
+     */
+    ajax: function(xhr, status, error) {
+      this.error(xhr, status, error);
+    }
+  });
 
   /*
    * Required utility functions
@@ -679,9 +613,9 @@
      * @return Mixed Returns the length of argument or undefined if not known.
      */
     getLength: function(a) {
-      if ($.isArray(a) || typeof a === "string") {
+      if ($.isArray(a) || typeof a == str) {
         return a.length;
-      } else if (typeof a === "object") {
+      } else if (typeof a == obj) {
         var len = 0;
         $.each(a, function() {
           len++;
@@ -702,11 +636,11 @@
      * Inspired by Dojo, which is Copyright (c) 2005-2009, The Dojo Foundation.
      */
     getObject: function(parts, create, obj) {
-      if (typeof parts === 'string') {
-        parts = parts.split('.');
+      if (typeof parts == str) {
+        parts = parts.split(".");
       }
 
-      if (typeof create !== 'boolean') {
+      if (typeof create != bool) {
         obj = create;
         create = undefined;
       }
@@ -732,9 +666,9 @@
      * @return Boolean Returns true if argument is empty, false otherwise.
      */
     isEmpty: function(o) {
-      if ($.isArray(o) || typeof o === "string") {
+      if ($.isArray(o) || typeof o == str) {
         return (o.length ? false : true);
-      } else if (typeof o === "object") {
+      } else if (typeof o == obj) {
         for (var p in o) {
           if (o.hasOwnProperty(p)) {
             return false;
@@ -767,18 +701,7 @@
    */
   $.fn.tabulate = function(options) {
     return this.each(function() {
-      var $this = $(this);
-
-      // don't re-create if this element has already been tabulated
-      if (!$this.data("tabulate")) {
-        var tabulate = $.extend(true, {}, $.tabulate);
-
-        // store class instance in $this
-        $this.data("tabulate", tabulate);
-
-        // initialize, pass in options
-        tabulate.init($this, options);
-      }
+      $.extend({}, $.tabulate).initialize(this, options);
     });
   };
 })(jQuery, window);

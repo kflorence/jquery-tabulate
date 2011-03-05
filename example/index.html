@@ -57,6 +57,23 @@
 
     <h2>Tabulate via AJAX request</h2>
     <div id="tabulate-ajax"></div>
+    <ul class="tabulate-navigation clearfix">
+      <li class="tabulate-partition tabulate-partition-first tabulate-pagination">
+        <span class="tabulate-prev" />
+        page <input class="tabulate-current-page" type="text" />
+        of <span class="tabulate-total-pages"></span>
+        <span class="tabulate-next" />
+      </li>
+      <li class="tabulate-partition tabulate-partition-no-input">
+        <span class="tabulate-count">0</span> total results
+      </li>
+      <li class="tabulate-partition tabulate-partition-no-input">
+        <div class="tabulate-loading"><span>Loading...</span></div>
+      </li>
+      <li class="tabulate-partition tabulate-partition-last">
+        <select class="tabulate-results-per-page"></select> results per page
+      </li>
+    </ul>
 
     <h2>Tabulate via static JSON</h2>
     <div id="tabulate-json"></div>
