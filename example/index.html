@@ -6,8 +6,9 @@
     <title>jQuery Tabulate Plugin</title>
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
     <script type="text/javascript" src="../src/jquery.tabulate.js"></script>
+
     <link type="text/css" rel="stylesheet" href="../themes/default/styles.css" />
-    <style type="text/css">a.api { color: #000; margin-top: 10px; }</style>
+    <link type="text/css" rel="stylesheet" href="styles.css" />
 
     <script type="text/javascript">
     jQuery(function($) {
@@ -56,24 +57,20 @@
     <p><a href="../jsdoc/" class="api">Documentation</a></p>
 
     <h2>Tabulate via AJAX request</h2>
-    <div id="tabulate-ajax"></div>
-    <ul class="tabulate-navigation clearfix">
-      <li class="tabulate-partition tabulate-partition-first tabulate-pagination">
-        <span class="tabulate-prev" />
-        page <input class="tabulate-current-page" type="text" />
-        of <span class="tabulate-total-pages"></span>
-        <span class="tabulate-next" />
-      </li>
-      <li class="tabulate-partition tabulate-partition-no-input">
-        <span class="tabulate-count">0</span> total results
-      </li>
-      <li class="tabulate-partition tabulate-partition-no-input">
-        <div class="tabulate-loading"><span>Loading...</span></div>
-      </li>
-      <li class="tabulate-partition tabulate-partition-last">
-        <select class="tabulate-results-per-page"></select> results per page
-      </li>
-    </ul>
+    <div id="tabulate-ajax">
+      <ul class="navigation clearfix">
+        <li class="first">
+          <ul class="pagination clearfix">
+            <li class="previous"><img src="images/previous.png" alt="Previous" title="Previous" /></li>
+            <li>page <input class="current-page" type="text" value="1" /> of <span class="total-pages">1</span></li>
+            <li class="next"><img src="images/next.png" alt="Next" title="Next" /></li>
+          </ul>
+        </li>
+        <li class="no-input"><span class="count">0</span> total results</li>
+        <li class="no-input"><div class="status"><span>status</span></div></li>
+        <li class="last"><select class="results-per-page"></select> results per page</li>
+      </ul>
+    </div>
 
     <h2>Tabulate via static JSON</h2>
     <div id="tabulate-json"></div>

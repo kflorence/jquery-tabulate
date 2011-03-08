@@ -1,0 +1,110 @@
+/*------------------------------------------------------------------------------
+  Navigation
+------------------------------------------------------------------------------*/
+
+.navigation {
+  margin: 0;
+  padding: 0;
+  font-size: 10px;
+  list-style: none;
+  border: solid 1px #bad9ff;
+  background-color: #ebf4ff;
+}
+
+.navigation > li {
+  float: left;
+  padding: 2px 5px;
+  white-space: nowrap;
+  border-left: solid 1px #bad9ff;
+}
+
+.navigation > li.no-input {
+  padding: 5px;
+  padding-top: 6px;
+}
+
+.navigation > li.first {
+  border-left: 0;
+}
+
+.navigation > li.last {
+  float: right;
+  border-right: 0;
+}
+
+.navigation > li select {
+  padding: 0;
+  font-size: 10px;
+  width: 48px;
+}
+
+.navigation > li .current-page {
+  padding: 1px 0;
+  margin: 0 2px;
+  font-size: 10px;
+  text-align: right;
+  width: 24px;
+  vertical-align: middle;
+}
+
+/*------------------------------------------------------------------------------
+  Pagination
+------------------------------------------------------------------------------*/
+
+.pagination {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pagination > li {
+  float: left;
+}
+
+.pagination .next, .pagination .previous {
+  margin-top: 2px;
+  cursor: pointer;
+}
+
+.pagination .previous {
+  margin-right: 5px;
+}
+
+.pagination .next {
+  margin-left: 5px;
+}
+
+/*------------------------------------------------------------------------------
+  Misc
+------------------------------------------------------------------------------*/
+
+.navigation .loading {
+  background: transparent url(images/loading.gif) left center no-repeat;
+}
+
+.navigation .status span {
+  visibility: hidden;
+}
+
+.no-results {
+  padding: 5px;
+  font-size: 10px;
+  text-align: center;
+  vertical-align: middle;
+  border: solid 1px #ebf4ff;
+}
+
+/*------------------------------------------------------------------------------
+  Clearfix
+------------------------------------------------------------------------------*/
+
+.clearfix:before, .clearfix:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  visibility: hidden;
+}
+
+.clearfix:after {
+  clear: both;
+}

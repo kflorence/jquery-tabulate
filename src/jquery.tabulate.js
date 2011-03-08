@@ -30,9 +30,8 @@
       debug: false,
       namespace: "tabulate",
       resultsPerPage: [5, 10, 25],
-      parseKey: function() {
-        return new RegExp(/\{([^{}]+)\}/g);
-      },
+      keyRegex: "/\{([^{}]+)\}/g",
+      insert: "prepend",
       data: {
         source: {},
         filters: {}
@@ -53,7 +52,7 @@
         count: "count"
       },
       elements: {
-        loading: ".loading",
+        status: ".status",
         previous: ".previous",
         next: ".next",
         count: ".count",
@@ -96,21 +95,28 @@
       // set limit to first item in results per page array, if not set
       this.filters.limit = this.filters.limit || this.options.resultsPerPage[0];
 
+      // generate parsekey regex
+      this.keyRegex = new RegExp(this.options.keyRegex);
+
       // Set up elements
       this.elements = {};
       $.each(this.options.elements, function(name, selector) {
         self.elements["$" + name] = $(selector)
-          .addClass([self.namespace, name].join("-"));
+          .addClass([self.options.namespace, name].join("-"));
       });
 
       // Set up templates
       this.templates = {};
       $.each(this.options.templates, function(name, content) {
         self.templates["$" + name] = $(content)
-          .addClass([self.namespace, name].join("-"));
+          .addClass([self.options.namespace, name].join("-"));
       });
 
-      this.$element.append(this.templates.$table);
+      if ($.isFunction($.fn[this.options.insert])) {
+        this.$element[this.options.insert](this.templates.$table);
+      } else {
+        throw new Error('Invalid insert method: "' + this.options.insert + '"');
+      }
 
       if (this.elements.$previous.length) {
         this.elements.$previous.click(function() {
@@ -296,11 +302,11 @@
               request.ajax.complete.apply(self, arguments);
             }
 
-            self.trigger(loading, false);
+            self.elements.$status.toggleClass(loading);
           }
         }));
 
-        this.trigger(loading, true);
+        self.elements.$status.toggleClass(loading);
       } else if (request.json) {
         this.trigger(ready, request.json);
       }
@@ -325,10 +331,10 @@
 
       // if total count is zero, we have nothing to tabulate
       if (this.totalCount !== 0) {
-        var self = this;
+        var $section, self = this;
 
         $.each(this.options.table, function(section, options) {
-          self.buildSection(section, options,
+          $section = self.buildSection(section, options,
             $.getObject(options.key || section, data) || []);
         });
       }
@@ -350,30 +356,29 @@
      *    The data given to tabulate
      */
     buildSection: function(name, options, data) {
-      if (!options.template) {
+      if (!this.options.table[name].template) {
         return;
       }
 
       var self = this,
-        $section = $(options.template).clone(), data = data.slice(
+        $section = $(this.options.table[name].template).clone(),
+        data = data.slice(
           this.filters.offset, this.filters.offset + this.filters.limit
         );
 
       // append section to table
-      this.templates.$table.append($section);
+      this.templates.$table.append($section.addClass(
+        [self.options.namespace, name].join("-")
+      ));
 
       // build rows
       $.each(data, function(r, row) {
-        var empty = true, r = r.toString(),
-          $row = self.templates.$row.clone();
+        var r = r.toString(), $row = self.templates.$row.clone();
 
         // build cells
         $.each(row, function(c, cell) {
           var c = c.toString(),
-            $cell = self.templates.$cell.clone(),
-            $cellContent = self.templates.$cellContent.clone();
-
-          $cell.append($cellContent);
+            $cell = self.templates.$cell.clone();
 
           self.applyProperties($cell, {
             key: c,
@@ -383,30 +388,22 @@
 
           // append to row, add hover classes (for IE)
           $row.append($cell.bind("mouseenter mouseleave", function() {
-            $(this).addClass([self.options.namespace, hover].join("-"));
+            $(this).toggleClass([self.options.namespace, hover].join("-"));
           }));
-
-          // set render to true if we have cell content
-          if (empty && $cellContent.html()) {
-            empty = false;
-          }
         });
 
-        // at least one cell needs content to append row
-        if (!empty) {
-          self.applyProperties($row, {
-            key: r,
-            type: "row",
-            dataset: data
-          }, $.getObject(r, options.rows));
+        self.applyProperties($row, {
+          key: r,
+          type: "row",
+          dataset: data
+        }, $.getObject(r, options.rows));
 
-          $row.children(":odd").addClass("tabulate-even");
-          $row.children(":even").addClass("tabulate-odd");
-          $row.children(":first").addClass("tabulate-first");
-          $row.children(":last").addClass("tabulate-last");
+        $row.children(":odd").addClass("tabulate-even");
+        $row.children(":even").addClass("tabulate-odd");
+        $row.children(":first").addClass("tabulate-first");
+        $row.children(":last").addClass("tabulate-last");
 
-          $section.append($row);
-        }
+        $section.append($row);
       });
 
       $section.children(":odd").addClass("tabulate-even");
@@ -416,6 +413,8 @@
 
       // update column count
       this.columns = Math.max(this.columns, data.length);
+
+      return $section;
     },
 
     /**
@@ -436,34 +435,29 @@
 
       $element.each(function(i, element) {
         var $element = $(element),
-          $content = $(".tabulate-content", $element),
           data = (dataset[key] ? dataset[key] : dataset),
           name = ($.isNumber(key) ? parseInt(key) + 1 : key),
-          args = ($content.length ? [$element, $content, data] : [$element, data]),
+          args = [$element, data],
           props = (properties
-            ? (typeof properties === "object" ? properties : { content: properties })
-            : (typeof data === "object" ? {} : { content: data })
+            ? (typeof properties == "object"
+              ? properties : { content: properties }
+            ) : (typeof data == "object" ? {} : { content: data })
           );
 
-        // apply type class
-        if (typeof settings.type == "string") {
-          $element.addClass([self.name, settings.type, name].join("-"));
-        }
+        $element.addClass([self.options.namespace, settings.type, name].join("-"));
 
         $.each(props, function(property, value) {
           switch(property) {
             // jQuery Object, HTML, String or Function (returning one of those types) supported
             case "content": {
-              if ($content.length) {
-                if (value instanceof $) {
-                  $content.append(value);
-                } else {
-                  $content.append((typeof value === "function" ? value.apply(self, args) : value)
-                    .replace(self.parseKey(), function(str, key) {
-                      return $.getObject(key, dataset) || "";
-                    })
-                  );
-                }
+              if (value.hasOwnProperty && value instanceof jQuery) {
+                $element.append(value);
+              } else {
+                $element.append((typeof value == "function" ? value.apply(self, args) : value)
+                  .replace(self.keyRegex, function(str, key) {
+                    return $.getObject(key, dataset) || "";
+                  })
+                );
               }
               break;
             }
@@ -498,7 +492,7 @@
      * @param {Object} filters
      *    Filters to apply to the request
      */
-    refresh: function(event, request, filters) {
+    refresh: function(e, request, filters) {
       if ((this.currentCount === 0)
         || (this.filters.offset + this.filters.limit > this.currentCount)
         && (this.currentCount < this.totalCount)) {
@@ -509,30 +503,12 @@
     },
 
     /**
-     * Shows or hides the loading element.
-     *
-     * @param {Object} event
-     *    The jQuery.Event Object
-     *
-     * @param {Boolean} [bool]
-     *    Whether or not to show the loading element. By default, the element
-     *    will be toggled.
-     */
-    loading: function(event, bool) {
-      if (typeof bool == "boolean") {
-        this.elements.$loading[(bool ? "addClass" : "removeClass")]("loading");
-      } else {
-        this.elements.$loading.toggleClass("loading");
-      }
-    },
-
-    /**
      * Called after initialization.
      *
      * @param {Object} event
      *    The jQuery Event Object
      */
-    initialized: function(event) {
+    initialized: function(e) {
       this.gatherData(this.options.data.source);
     },
 
@@ -545,7 +521,7 @@
      * @param {Object} data
      *    The data that was loaded.
      */
-    ready: function(event, data) {
+    ready: function(e, data) {
       this.tabulate(data);
     },
 
@@ -558,16 +534,19 @@
      * @param {Object} data
      *    The data object that was passed into tabulate.
      */
-    done: function(event, data) {
-      if (this.totalCount === 0) {
-        this.$navigation.before(this.fragments.$content.clone()
-          .addClass("tabulate-no-results").text("No results found")
-        );
-      }
-
+    done: function(e, data) {
       this.elements.$count.text(this.totalCount);
       this.elements.$totalPages.text(this.totalPages);
       this.elements.$currentPage.val(this.currentPage);
+    },
+
+    /**
+     * Called if tabulate detects an empty data set.
+     */
+    empty: function(e) {
+      this.templates.$table.append(this.templates.$row.clone().append(
+        this.templates.$cell.clone().text("No results found.")
+      ));
     },
 
     /**
@@ -576,7 +555,7 @@
      * @param {Object} event
      *    The jQuery Event Object
      */
-    reset: function(event) {
+    reset: function(e) {
       this.cache = {};
       this.totalCount = this.currentCount = 0;
       this.select(1);
